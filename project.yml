@@ -1,0 +1,23 @@
+name: SubscriptionTracker
+options:
+  bundleIdPrefix: com.yourdomain
+targets:
+  SubscriptionTracker:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: .
+        excludes:
+          - project.yml
+          - .github
+          - ExportOptions.plist
+    settings:
+      # These settings are essential for standard SwiftUI apps
+      INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+      INFOPLIST_KEY_UILaunchScreen_Generation: YES
+      PRODUCT_BUNDLE_IDENTIFIER: com.yourdomain.SubscriptionTracker
+      SWIFT_VERSION: 5.0
+      CODE_SIGN_STYLE: Manual
+      CODE_SIGN_IDENTITY: "Apple Development" # Or "Apple Distribution" depending on your cert
+      DEVELOPMENT_TEAM: "YOUR_TEAM_ID" # You must replace this with your Apple Developer Team ID
