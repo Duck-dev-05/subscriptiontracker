@@ -11,6 +11,17 @@ targets:
         excludes:
           - project.yml
           - .github
+    dependencies:
+      - package: Firebase
+        product: FirebaseAuth
+      - package: Firebase
+        product: FirebaseFirestore
+      - package: Firebase
+        product: FirebaseFirestoreSwift
+      - package: GoogleSignIn
+        product: GoogleSignIn
+      - package: GoogleSignIn
+        product: GoogleSignInSwift
     settings:
       GENERATE_INFOPLIST_FILE: YES
       CURRENT_PROJECT_VERSION: 1
@@ -23,3 +34,13 @@ targets:
       CODE_SIGN_STYLE: Manual
       CODE_SIGN_IDENTITY: "Apple Development" # Or "Apple Distribution" depending on your cert
       DEVELOPMENT_TEAM: "YOUR_TEAM_ID" # You must replace this with your Apple Developer Team ID
+      INFOPLIST_KEY_CFBundleURLTypes:
+        - CFBundleURLSchemes:
+            - "REPLACE_WITH_REVERSED_CLIENT_ID"
+packages:
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk.git
+    from: 10.22.0
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS.git
+    from: 7.1.0
