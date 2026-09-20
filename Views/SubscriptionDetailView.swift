@@ -84,7 +84,7 @@ struct SubscriptionDetailView: View {
                         
                         Text("\(manager.currencySymbol)\(String(format: "%.2f", subscription.price))")
                             .foregroundColor(idx == 0 ? .primary : .secondary)
-                            .bold(idx == 0)
+                            .fontWeight(idx == 0 ? .bold : .regular)
                     }
                 }
             }
