@@ -63,8 +63,8 @@ class AuthenticationManager: ObservableObject {
             DispatchQueue.main.async {
                 self.isAuthenticated = false
             }
-        } catch let signOutError as NSError {
-            self.errorMsg = "Error signing out: %@", signOutError
+        } catch let signOutError {
+            self.errorMsg = "Error signing out: \(signOutError.localizedDescription)"
         }
     }
 }
