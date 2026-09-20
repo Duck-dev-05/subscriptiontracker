@@ -62,6 +62,11 @@ struct Subscription: Identifiable, Codable {
     var category: SubscriptionCategory
     var icon: String        // emoji string chosen by user
     var notes: String
+    var accountName: String? // Which account it belongs to
+
+    var displayAccountName: String {
+        accountName?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false ? accountName! : "Personal"
+    }
 
     /// Monthly normalised cost
     var monthlyCost: Double {
@@ -88,7 +93,8 @@ struct Subscription: Identifiable, Codable {
         colorHex: String = "6C63FF",
         category: SubscriptionCategory = .other,
         icon: String = "📦",
-        notes: String = ""
+        notes: String = "",
+        accountName: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -99,6 +105,7 @@ struct Subscription: Identifiable, Codable {
         self.category = category
         self.icon = icon
         self.notes = notes
+        self.accountName = accountName
     }
 }
 
@@ -157,6 +164,15 @@ class SubscriptionManager: ObservableObject {
 
     var dueSoon: [Subscription] {
         subscriptions.filter { $0.isDueSoon }.sorted { $0.daysUntilNextBilling < $1.daysUntilNextBilling }
+    }
+
+    var uniqueAccounts: [String] {
+        let accounts = subscriptions.map { $0.displayAccountName }
+        return Array(Set(accounts)).sorted()
+    }
+
+    func subscriptions(forAccount account: String) -> [Subscription] {
+        subscriptions.filter { $0.displayAccountName == account }
     }
 
     // MARK: Persistence

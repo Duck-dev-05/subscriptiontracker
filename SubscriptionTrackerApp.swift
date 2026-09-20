@@ -8,7 +8,6 @@ struct SubscriptionTrackerApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(subscriptionManager)
-                .preferredColorScheme(.dark)
         }
     }
 }

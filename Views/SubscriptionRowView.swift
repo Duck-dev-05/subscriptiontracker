@@ -5,7 +5,7 @@ struct SubscriptionRowView: View {
     let subscription: Subscription
 
     var accentColor: Color {
-        Color(hex: subscription.colorHex) ?? .accentIndigo
+        Color(hex: subscription.colorHex) ?? .blue
     }
 
     var body: some View {
@@ -14,11 +14,7 @@ struct SubscriptionRowView: View {
             ZStack {
                 Circle()
                     .fill(accentColor.opacity(0.2))
-                    .frame(width: 52, height: 52)
-                    .overlay(
-                        Circle()
-                            .stroke(accentColor.opacity(0.4), lineWidth: 1.5)
-                    )
+                    .frame(width: 44, height: 44)
                 Text(subscription.icon)
                     .font(.system(size: 24))
             }
@@ -26,23 +22,23 @@ struct SubscriptionRowView: View {
             // Name + category
             VStack(alignment: .leading, spacing: 4) {
                 Text(subscription.name)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.textPrimary)
+                    .font(.headline)
+                    .foregroundColor(.primary)
 
                 HStack(spacing: 6) {
                     Text(subscription.category.emoji)
-                        .font(.system(size: 11))
+                        .font(.caption)
                     Text(subscription.category.rawValue)
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(subscription.category.accentColor)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
 
                     Text("•")
-                        .foregroundColor(.textMuted)
-                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                        .font(.caption)
 
                     Text(dateLabel)
-                        .font(.system(size: 12))
-                        .foregroundColor(.textSecondary)
+                        .font(.caption)
+                        .foregroundColor(subscription.isDueSoon ? .red : .secondary)
                 }
             }
 
@@ -51,16 +47,15 @@ struct SubscriptionRowView: View {
             // Price
             VStack(alignment: .trailing, spacing: 3) {
                 Text("\(manager.currencySymbol)\(String(format: "%.2f", subscription.price))")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.textPrimary)
+                    .font(.headline)
+                    .foregroundColor(.primary)
 
                 Text(subscription.billingCycle.abbreviation)
-                    .font(.system(size: 12))
-                    .foregroundColor(.textSecondary)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
         }
-        .padding(16)
-        .glassCard()
+        .padding(.vertical, 4)
     }
 
     private var dateLabel: String {

@@ -17,72 +17,67 @@ struct CalendarView: View {
     
     var body: some View {
         NavigationView {
-            ZStack {
-                Color.appBackground.ignoresSafeArea()
-                
-                VStack(spacing: 20) {
+            VStack(spacing: 0) {
                     // Header
                     HStack {
                         Text(monthString(from: currentMonth))
                             .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(.textPrimary)
+                            .foregroundColor(.primary)
                         Spacer()
                         HStack(spacing: 16) {
                             Button(action: previousMonth) {
                                 Image(systemName: "chevron.left")
-                                    .foregroundColor(.textPrimary)
+                                    .foregroundColor(.primary)
                             }
                             Button(action: nextMonth) {
                                 Image(systemName: "chevron.right")
-                                    .foregroundColor(.textPrimary)
+                                    .foregroundColor(.primary)
                             }
                         }
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
+                    .padding(.bottom, 8)
                     
                     // Calendar Grid
                     calendarGrid
                         .padding(.horizontal, 16)
                     
                     Divider()
-                        .background(Color.textMuted.opacity(0.3))
-                        .padding(.top, 8)
+                        .padding(.top, 16)
                     
                     // Selected Date Info
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 0) {
                         Text("Due on \(dateString(from: selectedDate))")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.textSecondary)
+                            .font(.headline)
+                            .foregroundColor(.secondary)
                             .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
+                            .background(Color(uiColor: .systemGroupedBackground))
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         
                         if subscriptionsForSelectedDate.isEmpty {
-                            VStack(spacing: 12) {
+                            VStack {
                                 Spacer()
                                 Text("No payments due.")
-                                    .foregroundColor(.textMuted)
-                                    .font(.system(size: 15))
+                                    .foregroundColor(.secondary)
                                 Spacer()
                             }
                             .frame(maxWidth: .infinity)
                         } else {
-                            ScrollView(showsIndicators: false) {
-                                VStack(spacing: 12) {
-                                    ForEach(subscriptionsForSelectedDate) { sub in
-                                        SubscriptionRowView(subscription: sub)
-                                    }
+                            List {
+                                ForEach(subscriptionsForSelectedDate) { sub in
+                                    SubscriptionRowView(subscription: sub)
                                 }
-                                .padding(.horizontal, 20)
-                                .padding(.bottom, 120)
                             }
+                            .listStyle(PlainListStyle())
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    Spacer()
                 }
             }
-            .navigationBarHidden(true)
+            .navigationTitle("Calendar")
+            .navigationBarTitleDisplayMode(.inline)
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
@@ -95,8 +90,8 @@ struct CalendarView: View {
             HStack {
                 ForEach(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], id: \.self) { day in
                     Text(day)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.textMuted)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -122,7 +117,9 @@ struct CalendarView: View {
             }
         }
         .padding(16)
-        .glassCard()
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
     }
     
     // MARK: - Helpers
@@ -189,19 +186,18 @@ struct DateCell: View {
         ZStack {
             if isSelected {
                 Circle()
-                    .fill(LinearGradient.heroGradient)
+                    .fill(Color.blue)
                     .frame(width: 36, height: 36)
-                    .shadow(color: Color.accentIndigo.opacity(0.4), radius: 6)
             }
             
             VStack(spacing: 2) {
                 Text("\(calendar.component(.day, from: date))")
                     .font(.system(size: 14, weight: isSelected || isToday ? .bold : .regular))
-                    .foregroundColor(isSelected ? .white : (isToday ? .accentIndigo : .textPrimary))
+                    .foregroundColor(isSelected ? .white : (isToday ? .blue : .primary))
                 
                 if hasSubscriptions {
                     Circle()
-                        .fill(isSelected ? .white : Color.accentPink)
+                        .fill(isSelected ? .white : Color.red)
                         .frame(width: 4, height: 4)
                 } else {
                     Color.clear.frame(width: 4, height: 4)
