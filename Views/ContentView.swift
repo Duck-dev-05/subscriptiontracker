@@ -3,11 +3,13 @@ import SwiftUI
 // MARK: - Tab Enum
 
 enum AppTab: Int, CaseIterable {
-    case home, statistics, settings
+    case home, calendar, discover, statistics, settings
 
     var title: String {
         switch self {
         case .home:       return "Home"
+        case .calendar:   return "Calendar"
+        case .discover:   return "Discover"
         case .statistics: return "Analytics"
         case .settings:   return "Settings"
         }
@@ -16,6 +18,8 @@ enum AppTab: Int, CaseIterable {
     var icon: String {
         switch self {
         case .home:       return "house.fill"
+        case .calendar:   return "calendar"
+        case .discover:   return "sparkles.rectangle.stack.fill"
         case .statistics: return "chart.pie.fill"
         case .settings:   return "gearshape.fill"
         }
@@ -33,6 +37,8 @@ struct ContentView: View {
             Group {
                 switch selectedTab {
                 case .home:       HomeView()
+                case .calendar:   CalendarView()
+                case .discover:   DiscoverView()
                 case .statistics: StatisticsView()
                 case .settings:   SettingsView()
                 }
@@ -62,7 +68,7 @@ struct CustomTabBar: View {
                 }
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 10)
         .padding(.top, 14)
         .padding(.bottom, 28)
         .background(
@@ -92,16 +98,16 @@ struct TabBarButton: View {
                     if isSelected {
                         Circle()
                             .fill(LinearGradient.heroGradient)
-                            .frame(width: 46, height: 46)
+                            .frame(width: 42, height: 42)
                             .shadow(color: Color.accentIndigo.opacity(0.5), radius: 8)
                     }
                     Image(systemName: tab.icon)
-                        .font(.system(size: 20, weight: .semibold))
+                        .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(isSelected ? .white : Color.textMuted)
                 }
 
                 Text(tab.title)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: 10, weight: .medium))
                     .foregroundColor(isSelected ? Color.accentIndigo : Color.textMuted)
             }
             .frame(maxWidth: .infinity)

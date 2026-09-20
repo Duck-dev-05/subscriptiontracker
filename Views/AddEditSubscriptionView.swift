@@ -5,11 +5,13 @@ import SwiftUI
 enum AddEditMode {
     case add
     case edit(Subscription)
+    case template(Subscription)
 
     var title: String {
         switch self {
         case .add:  return "New Subscription"
         case .edit: return "Edit Subscription"
+        case .template: return "New Subscription"
         }
     }
 }
@@ -299,7 +301,8 @@ struct AddEditSubscriptionView: View {
     }
 
     private func prepopulate() {
-        if case .edit(let sub) = mode {
+        switch mode {
+        case .edit(let sub), .template(let sub):
             name         = sub.name
             price        = String(format: "%.2f", sub.price)
             billingCycle = sub.billingCycle
@@ -308,6 +311,8 @@ struct AddEditSubscriptionView: View {
             icon         = sub.icon
             colorHex     = sub.colorHex
             notes        = sub.notes
+        case .add:
+            break
         }
     }
 
