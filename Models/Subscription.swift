@@ -65,7 +65,10 @@ struct Subscription: Identifiable, Codable {
     var accountName: String? // Which account it belongs to
 
     var displayAccountName: String {
-        accountName?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false ? accountName! : "Personal"
+        if let acc = accountName?.trimmingCharacters(in: .whitespacesAndNewlines), !acc.isEmpty {
+            return acc
+        }
+        return "Personal"
     }
 
     /// Monthly normalised cost
