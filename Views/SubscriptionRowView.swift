@@ -1,79 +1,73 @@
 import SwiftUI
 
 struct SubscriptionRowView: View {
+    @EnvironmentObject var manager: SubscriptionManager
     let subscription: Subscription
-    
+
+    var accentColor: Color {
+        Color(hex: subscription.colorHex) ?? .accentIndigo
+    }
+
     var body: some View {
         HStack(spacing: 16) {
-            // Icon Placeholder
+            // Icon Avatar
             ZStack {
                 Circle()
-                    .fill(Color(hex: subscription.colorHex) ?? Color.blue)
-                    .frame(width: 50, height: 50)
-                
-                Text(String(subscription.name.prefix(1)).uppercased())
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .fill(accentColor.opacity(0.2))
+                    .frame(width: 52, height: 52)
+                    .overlay(
+                        Circle()
+                            .stroke(accentColor.opacity(0.4), lineWidth: 1.5)
+                    )
+                Text(subscription.icon)
+                    .font(.system(size: 24))
             }
-            
+
+            // Name + category
             VStack(alignment: .leading, spacing: 4) {
                 Text(subscription.name)
-                    .font(.headline)
-                
-                Text("Next: \(subscription.nextBillingDate.formatted(date: .abbreviated, time: .omitted))")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.textPrimary)
+
+                HStack(spacing: 6) {
+                    Text(subscription.category.emoji)
+                        .font(.system(size: 11))
+                    Text(subscription.category.rawValue)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(subscription.category.accentColor)
+
+                    Text("•")
+                        .foregroundColor(.textMuted)
+                        .font(.system(size: 10))
+
+                    Text(dateLabel)
+                        .font(.system(size: 12))
+                        .foregroundColor(.textSecondary)
+                }
             }
-            
+
             Spacer()
-            
-            VStack(alignment: .trailing, spacing: 4) {
-                Text(String(format: "$%.2f", subscription.price))
-                    .font(.headline)
-                    .bold()
-                
-                Text(subscription.cycleAbbreviation)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+
+            // Price
+            VStack(alignment: .trailing, spacing: 3) {
+                Text("\(manager.currencySymbol)\(String(format: "%.2f", subscription.price))")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.textPrimary)
+
+                Text(subscription.billingCycle.abbreviation)
+                    .font(.system(size: 12))
+                    .foregroundColor(.textSecondary)
             }
         }
-        .padding(.vertical, 8)
+        .padding(16)
+        .glassCard()
     }
-}
 
-// Extension to handle hex colors
-extension Color {
-    init?(hex: String) {
-        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
-
-        var rgb: UInt64 = 0
-
-        var r: CGFloat = 0.0
-        var g: CGFloat = 0.0
-        var b: CGFloat = 0.0
-        var a: CGFloat = 1.0
-
-        let length = hexSanitized.count
-
-        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else { return nil }
-
-        if length == 6 {
-            r = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
-            g = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
-            b = CGFloat(rgb & 0x0000FF) / 255.0
-
-        } else if length == 8 {
-            r = CGFloat((rgb & 0xFF000000) >> 24) / 255.0
-            g = CGFloat((rgb & 0x00FF0000) >> 16) / 255.0
-            b = CGFloat((rgb & 0x0000FF00) >> 8) / 255.0
-            a = CGFloat(rgb & 0x000000FF) / 255.0
-
-        } else {
-            return nil
-        }
-
-        self.init(red: r, green: g, blue: b, opacity: a)
+    private var dateLabel: String {
+        let d = subscription.daysUntilNextBilling
+        if d == 0 { return "Today" }
+        if d == 1 { return "Tomorrow" }
+        if d < 0  { return "Overdue" }
+        return subscription.nextBillingDate.formatted(.dateTime.month(.abbreviated).day())
     }
 }

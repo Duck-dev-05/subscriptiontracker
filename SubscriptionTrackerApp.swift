@@ -6,8 +6,9 @@ struct SubscriptionTrackerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DashboardView()
+            ContentView()
                 .environmentObject(subscriptionManager)
+                .preferredColorScheme(.dark)
         }
     }
 }
