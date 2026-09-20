@@ -75,9 +75,8 @@ struct CalendarView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-            }
-            .navigationTitle("Calendar")
-            .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("Calendar")
+                .navigationBarTitleDisplayMode(.inline)
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
