@@ -29,12 +29,12 @@ jobs:
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
-          CONFIGURATION_BUILD_DIR=$PWD/build/Release-iphoneos
+          -derivedDataPath DerivedData
 
     - name: Package IPA for TrollStore
       run: |
         mkdir -p Payload
-        cp -r build/Release-iphoneos/SubscriptionTracker.app Payload/
+        cp -r DerivedData/Build/Products/Release-iphoneos/SubscriptionTracker.app Payload/
         zip -r SubscriptionTracker.ipa Payload
 
     - name: Upload IPA Artifact
