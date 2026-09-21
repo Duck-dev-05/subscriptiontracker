@@ -1,7 +1,6 @@
 import Foundation
 import Combine
 import FirebaseFirestore
-import FirebaseFirestoreSwift
 import FirebaseAuth
 
 class SubscriptionManager: ObservableObject {
