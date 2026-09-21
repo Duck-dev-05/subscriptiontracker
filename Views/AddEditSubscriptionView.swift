@@ -45,6 +45,11 @@ struct AddEditSubscriptionView: View {
         return nil
     }
 
+    private var existingSub: Subscription? {
+        if case .edit(let sub) = mode { return sub }
+        return nil
+    }
+
     var body: some View {
         NavigationView {
             Form {
@@ -199,7 +204,9 @@ struct AddEditSubscriptionView: View {
             category: category,
             icon: icon,
             notes: notes,
-            accountName: accountName.trimmingCharacters(in: .whitespaces).isEmpty ? nil : accountName.trimmingCharacters(in: .whitespaces)
+            accountName: accountName.trimmingCharacters(in: .whitespaces).isEmpty ? nil : accountName.trimmingCharacters(in: .whitespaces),
+            paymentHistory: existingSub?.paymentHistory ?? [],
+            isArchived: existingSub?.isArchived ?? false
         )
 
         if case .edit = mode {

@@ -11,6 +11,9 @@ targets:
         excludes:
           - project.yml
           - .github
+          - .git
+          - DerivedData
+          - Payload
     dependencies:
       - package: Firebase
         product: FirebaseAuth
