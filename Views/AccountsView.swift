@@ -107,7 +107,7 @@ struct AccountDetailView: View {
                         .foregroundColor(.secondary)
                 } else {
                     ForEach(subscriptions) { sub in
-                        NavigationLink(destination: SubscriptionDetailView(subscription: sub)) {
+                        NavigationLink(destination: SubscriptionDetailView(initialSubscription: sub)) {
                             SubscriptionRowView(subscription: sub)
                         }
                     }

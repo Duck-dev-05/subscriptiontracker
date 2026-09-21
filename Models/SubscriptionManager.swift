@@ -13,12 +13,13 @@ class SubscriptionManager: ObservableObject {
     private let currencyKey = "CurrencySymbol"
     private var db = Firestore.firestore()
     private var listenerRegistration: ListenerRegistration?
+    private var authStateListenerHandle: AuthStateDidChangeListenerHandle?
 
     init() {
         currencySymbol = UserDefaults.standard.string(forKey: currencyKey) ?? "$"
         
         // Listen for authentication state changes
-        Auth.auth().addStateDidChangeListener { [weak self] auth, user in
+        authStateListenerHandle = Auth.auth().addStateDidChangeListener { [weak self] auth, user in
             if let user = user {
                 self?.listenToFirestore(userId: user.uid)
             } else {
@@ -30,6 +31,9 @@ class SubscriptionManager: ObservableObject {
     
     deinit {
         listenerRegistration?.remove()
+        if let handle = authStateListenerHandle {
+            Auth.auth().removeStateDidChangeListener(handle)
+        }
     }
 
     // MARK: CRUD

@@ -89,7 +89,7 @@ struct HomeView: View {
                             .padding(.vertical, 20)
                     } else {
                         ForEach(sortedSubscriptions) { sub in
-                            NavigationLink(destination: SubscriptionDetailView(subscription: sub)) {
+                            NavigationLink(destination: SubscriptionDetailView(initialSubscription: sub)) {
                                 SubscriptionRowView(subscription: sub)
                             }
                         }
