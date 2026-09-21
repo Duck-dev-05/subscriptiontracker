@@ -36,9 +36,9 @@ targets:
       INFOPLIST_KEY_UILaunchScreen_Generation: YES
       PRODUCT_BUNDLE_IDENTIFIER: com.yourdomain.SubscriptionTracker
       SWIFT_VERSION: 5.0
-      CODE_SIGN_STYLE: Manual
-      CODE_SIGN_IDENTITY: "Apple Development" # Or "Apple Distribution" depending on your cert
-      DEVELOPMENT_TEAM: "YOUR_TEAM_ID" # You must replace this with your Apple Developer Team ID
+      CODE_SIGN_STYLE: Automatic
+      CODE_SIGN_IDENTITY: ""
+      # DEVELOPMENT_TEAM: "YOUR_TEAM_ID" # You must replace this with your Apple Developer Team ID
       INFOPLIST_KEY_CFBundleURLTypes:
         - CFBundleURLSchemes:
             - "REPLACE_WITH_REVERSED_CLIENT_ID"
