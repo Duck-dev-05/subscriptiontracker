@@ -1,12 +1,28 @@
 import SwiftUI
 
+enum SortOption: String, CaseIterable {
+    case nextBilling = "Next Billing Date"
+    case costHighToLow = "Cost (High to Low)"
+    case name = "Name (A-Z)"
+}
+
 struct HomeView: View {
     @EnvironmentObject var manager: SubscriptionManager
     @State private var showingAdd = false
     @State private var showingAccounts = false
+    @State private var sortOption: SortOption = .nextBilling
 
     var sortedSubscriptions: [Subscription] {
-        manager.subscriptions.sorted { $0.nextBillingDate < $1.nextBillingDate }
+        manager.activeSubscriptions.sorted { lhs, rhs in
+            switch sortOption {
+            case .nextBilling:
+                return lhs.nextBillingDate < rhs.nextBillingDate
+            case .costHighToLow:
+                return lhs.monthlyCost > rhs.monthlyCost
+            case .name:
+                return lhs.name.lowercased() < rhs.name.lowercased()
+            }
+        }
     }
 
     var body: some View {
@@ -40,7 +56,7 @@ struct HomeView: View {
                                 Text("Active")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
-                                Text("\(manager.subscriptions.count)")
+                                Text("\(manager.activeSubscriptions.count)")
                                     .font(.subheadline)
                                     .bold()
                             }
@@ -66,7 +82,7 @@ struct HomeView: View {
                 
                 // MARK: All Subscriptions
                 Section(header: Text("All Subscriptions")) {
-                    if manager.subscriptions.isEmpty {
+                    if manager.activeSubscriptions.isEmpty {
                         Text("No subscriptions yet. Tap + to add.")
                             .foregroundColor(.secondary)
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -90,8 +106,20 @@ struct HomeView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showingAdd = true }) {
-                        Image(systemName: "plus")
+                    HStack(spacing: 16) {
+                        Menu {
+                            Picker("Sort By", selection: $sortOption) {
+                                ForEach(SortOption.allCases, id: \.self) { option in
+                                    Text(option.rawValue).tag(option)
+                                }
+                            }
+                        } label: {
+                            Image(systemName: "arrow.up.arrow.down")
+                        }
+                        
+                        Button(action: { showingAdd = true }) {
+                            Image(systemName: "plus")
+                        }
                     }
                 }
             }

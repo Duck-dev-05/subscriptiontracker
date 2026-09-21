@@ -24,6 +24,7 @@ struct SubscriptionTrackerApp: App {
             if authManager.isAuthenticated {
                 ContentView()
                     .environmentObject(subscriptionManager)
+                    .environmentObject(authManager)
             } else {
                 LoginView()
                     .environmentObject(authManager)

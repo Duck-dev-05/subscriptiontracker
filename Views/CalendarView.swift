@@ -10,7 +10,7 @@ struct CalendarView: View {
     private let dateFormatter = DateFormatter()
     
     var subscriptionsForSelectedDate: [Subscription] {
-        manager.subscriptions.filter { sub in
+        manager.activeSubscriptions.filter { sub in
             calendar.isDate(sub.nextBillingDate, inSameDayAs: selectedDate)
         }
     }
@@ -146,7 +146,7 @@ struct CalendarView: View {
     }
     
     private func hasSubscriptions(on date: Date) -> Bool {
-        manager.subscriptions.contains { calendar.isDate($0.nextBillingDate, inSameDayAs: date) }
+        manager.activeSubscriptions.contains { calendar.isDate($0.nextBillingDate, inSameDayAs: date) }
     }
     
     private func daysInMonth() -> [Date?] {

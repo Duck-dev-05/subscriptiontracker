@@ -63,5 +63,8 @@ struct ContentView: View {
                 }
                 .tag(AppTab.settings)
         }
+        .onAppear {
+            NotificationManager.shared.requestPermission()
+        }
     }
 }

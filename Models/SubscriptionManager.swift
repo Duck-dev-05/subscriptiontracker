@@ -43,6 +43,7 @@ class SubscriptionManager: ObservableObject {
         guard let uid = userId else { return }
         do {
             try db.collection("users").document(uid).collection("subscriptions").document(subscription.id.uuidString).setData(from: subscription)
+            NotificationManager.shared.scheduleNotification(for: subscription)
         } catch {
             print("Error adding to Firestore: \(error)")
         }
@@ -52,6 +53,7 @@ class SubscriptionManager: ObservableObject {
         guard let uid = userId else { return }
         do {
             try db.collection("users").document(uid).collection("subscriptions").document(subscription.id.uuidString).setData(from: subscription)
+            NotificationManager.shared.scheduleNotification(for: subscription)
         } catch {
             print("Error updating in Firestore: \(error)")
         }
@@ -67,6 +69,7 @@ class SubscriptionManager: ObservableObject {
     func delete(_ subscription: Subscription) {
         guard let uid = userId else { return }
         db.collection("users").document(uid).collection("subscriptions").document(subscription.id.uuidString).delete()
+        NotificationManager.shared.cancelNotification(for: subscription.id.uuidString)
     }
 
     func clearAll() {
@@ -77,13 +80,22 @@ class SubscriptionManager: ObservableObject {
             for doc in docs {
                 doc.reference.delete()
             }
+            NotificationManager.shared.cancelAllNotifications()
         }
     }
 
     // MARK: Computed
+    
+    var activeSubscriptions: [Subscription] {
+        subscriptions.filter { !$0.isArchived }
+    }
+    
+    var archivedSubscriptions: [Subscription] {
+        subscriptions.filter { $0.isArchived }
+    }
 
     var totalMonthlyCost: Double {
-        subscriptions.reduce(0) { $0 + $1.monthlyCost }
+        activeSubscriptions.reduce(0) { $0 + $1.monthlyCost }
     }
 
     var totalYearlyCost: Double {
@@ -91,16 +103,16 @@ class SubscriptionManager: ObservableObject {
     }
 
     var dueSoon: [Subscription] {
-        subscriptions.filter { $0.isDueSoon }.sorted { $0.daysUntilNextBilling < $1.daysUntilNextBilling }
+        activeSubscriptions.filter { $0.isDueSoon }.sorted { $0.daysUntilNextBilling < $1.daysUntilNextBilling }
     }
 
     var uniqueAccounts: [String] {
-        let accounts = subscriptions.map { $0.displayAccountName }
+        let accounts = activeSubscriptions.map { $0.displayAccountName }
         return Array(Set(accounts)).sorted()
     }
 
     func subscriptions(forAccount account: String) -> [Subscription] {
-        subscriptions.filter { $0.displayAccountName == account }
+        activeSubscriptions.filter { $0.displayAccountName == account }
     }
 
     // MARK: Persistence (Firestore)

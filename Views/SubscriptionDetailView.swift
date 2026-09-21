@@ -3,7 +3,11 @@ import SwiftUI
 struct SubscriptionDetailView: View {
     @EnvironmentObject var manager: SubscriptionManager
     @Environment(\.dismiss) private var dismiss
-    let subscription: Subscription
+    let initialSubscription: Subscription
+    
+    var subscription: Subscription {
+        manager.subscriptions.first(where: { $0.id == initialSubscription.id }) ?? initialSubscription
+    }
 
     @State private var showingEdit  = false
     @State private var showingDelete = false
@@ -97,12 +101,42 @@ struct SubscriptionDetailView: View {
                 }
             }
             
+            // Payment History
+            if !subscription.paymentHistory.isEmpty {
+                Section(header: Text("Payment History")) {
+                    ForEach(subscription.paymentHistory.sorted(by: { $0.date > $1.date })) { payment in
+                        HStack {
+                            Text(payment.date.formatted(date: .long, time: .omitted))
+                            Spacer()
+                            Text("\(manager.currencySymbol)\(String(format: "%.2f", payment.amount))")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+            }
+            
             // Actions
             Section {
+                Button(action: markAsPaid) {
+                    HStack {
+                        Image(systemName: "checkmark.circle.fill")
+                        Text("Mark as Paid")
+                    }
+                }
+                .foregroundColor(.green)
+                
                 Button("Edit Subscription") {
                     showingEdit = true
                 }
                 .foregroundColor(.blue)
+                
+                Button("Archive Subscription") {
+                    var updated = subscription
+                    updated.isArchived = true
+                    manager.update(updated)
+                    dismiss()
+                }
+                .foregroundColor(.orange)
                 
                 Button("Delete Subscription") {
                     showingDelete = true
@@ -143,5 +177,19 @@ struct SubscriptionDetailView: View {
         case .yearly:  components.year = 1
         }
         return Calendar.current.date(byAdding: components, to: date) ?? date
+    }
+
+    private func markAsPaid() {
+        var updated = subscription
+        
+        // Record payment
+        let payment = PaymentHistory(date: Date(), amount: subscription.price)
+        updated.paymentHistory.append(payment)
+        
+        // Advance next billing date
+        updated.nextBillingDate = nextDate(after: subscription.nextBillingDate)
+        
+        // Update in manager
+        manager.update(updated)
     }
 }

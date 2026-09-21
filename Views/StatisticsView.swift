@@ -8,7 +8,7 @@ struct StatisticsView: View {
     // Aggregate cost per category
     var categoryBreakdown: [(category: SubscriptionCategory, amount: Double, percentage: Double)] {
         var totals: [SubscriptionCategory: Double] = [:]
-        for sub in manager.subscriptions {
+        for sub in manager.activeSubscriptions {
             totals[sub.category, default: 0] += sub.monthlyCost
         }
         
@@ -21,7 +21,7 @@ struct StatisticsView: View {
     var body: some View {
         NavigationView {
             List {
-                if manager.subscriptions.isEmpty {
+                if manager.activeSubscriptions.isEmpty {
                     Section {
                         Text("No data available.")
                             .foregroundColor(.secondary)
@@ -36,8 +36,7 @@ struct StatisticsView: View {
                                 Text("\(manager.currencySymbol)\(String(format: "%.2f", totalCost))")
                                     .font(.system(size: 40, weight: .bold))
                                     .foregroundColor(.primary)
-                                
-                                Text("Across \(manager.subscriptions.count) subscriptions")
+                                Text("Across \(manager.activeSubscriptions.count) subscriptions")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }

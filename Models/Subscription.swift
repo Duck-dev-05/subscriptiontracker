@@ -63,6 +63,8 @@ struct Subscription: Identifiable, Codable {
     var icon: String        // emoji string chosen by user
     var notes: String
     var accountName: String? // Which account it belongs to
+    var paymentHistory: [PaymentHistory] = []
+    var isArchived: Bool = false
 
     var displayAccountName: String {
         if let acc = accountName?.trimmingCharacters(in: .whitespacesAndNewlines), !acc.isEmpty {
@@ -97,7 +99,9 @@ struct Subscription: Identifiable, Codable {
         category: SubscriptionCategory = .other,
         icon: String = "📦",
         notes: String = "",
-        accountName: String? = nil
+        accountName: String? = nil,
+        paymentHistory: [PaymentHistory] = [],
+        isArchived: Bool = false
     ) {
         self.id = id
         self.name = name
@@ -109,6 +113,8 @@ struct Subscription: Identifiable, Codable {
         self.icon = icon
         self.notes = notes
         self.accountName = accountName
+        self.paymentHistory = paymentHistory
+        self.isArchived = isArchived
     }
 }
 
