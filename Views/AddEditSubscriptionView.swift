@@ -167,7 +167,7 @@ struct AddEditSubscriptionView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") { save() }
-                        .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty || price.isEmpty)
+                        .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty || Double(price.replacingOccurrences(of: ",", with: ".")) == nil)
                 }
             }
         }
