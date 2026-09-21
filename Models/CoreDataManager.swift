@@ -41,7 +41,7 @@ class CoreDataManager {
 }
 
 @objc(CDSubscription)
-public class CDSubscription: NSManagedObject {
+public class CDSubscription: NSManagedObject, Identifiable {
     @NSManaged public var id: UUID?
     @NSManaged public var name: String?
     @NSManaged public var price: Double
