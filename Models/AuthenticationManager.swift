@@ -9,9 +9,11 @@ class AuthenticationManager: ObservableObject {
     @Published var errorMsg: String?
 
     init() {
-        // Check if there is already a user logged in
-        if Auth.auth().currentUser != nil {
-            self.isAuthenticated = true
+        // Listen to Firebase auth state changes to reliably check if a user is logged in
+        Auth.auth().addStateDidChangeListener { [weak self] auth, user in
+            DispatchQueue.main.async {
+                self?.isAuthenticated = user != nil
+            }
         }
     }
 

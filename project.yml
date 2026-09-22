@@ -39,7 +39,7 @@ targets:
       # DEVELOPMENT_TEAM: "YOUR_TEAM_ID" # You must replace this with your Apple Developer Team ID
       INFOPLIST_KEY_CFBundleURLTypes:
         - CFBundleURLSchemes:
-            - "REPLACE_WITH_REVERSED_CLIENT_ID"
+            - "com.googleusercontent.apps.1034308202455-cf35fd24g97ncmmv6b3kdr7emcdq2n74"
 packages:
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk.git
