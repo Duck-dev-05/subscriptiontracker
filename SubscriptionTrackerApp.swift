@@ -21,7 +21,10 @@ struct SubscriptionTrackerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if authManager.isAuthenticated {
+            if authManager.isChecking {
+                ProgressView()
+                    .scaleEffect(1.5)
+            } else if authManager.isAuthenticated {
                 ContentView()
                     .environmentObject(subscriptionManager)
                     .environmentObject(authManager)

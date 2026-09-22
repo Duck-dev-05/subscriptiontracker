@@ -6,6 +6,7 @@ import SwiftUI
 
 class AuthenticationManager: ObservableObject {
     @Published var isAuthenticated: Bool = Auth.auth().currentUser != nil
+    @Published var isChecking: Bool = true
     @Published var errorMsg: String?
 
     init() {
@@ -13,6 +14,7 @@ class AuthenticationManager: ObservableObject {
         Auth.auth().addStateDidChangeListener { [weak self] auth, user in
             DispatchQueue.main.async {
                 self?.isAuthenticated = user != nil
+                self?.isChecking = false
             }
         }
     }
