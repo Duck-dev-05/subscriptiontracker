@@ -57,8 +57,7 @@ struct SubscriptionDetailView: View {
                     .foregroundColor(AppTheme.textPrimary)
             }
         }
-        .toolbarBackground(AppTheme.background, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+
         .sheet(isPresented: $showingEdit) {
             AddEditSubscriptionView(mode: .edit(subscription))
         }

@@ -36,8 +36,7 @@ struct ArchiveView: View {
         }
         .navigationTitle("Archive")
         .navigationBarTitleDisplayMode(.large)
-        .toolbarBackground(AppTheme.background, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+
     }
 
     private func archivedRow(_ sub: Subscription) -> some View {
