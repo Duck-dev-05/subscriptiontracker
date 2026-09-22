@@ -3,6 +3,7 @@ import FirebaseAuth
 
 struct SettingsView: View {
     @EnvironmentObject var manager: SubscriptionManager
+    @Environment(\.dismiss) private var dismiss
     @State private var showingWipeAlert = false
 
     let currencies = ["$", "£", "€", "¥", "₹"]
@@ -25,6 +26,13 @@ struct SettingsView: View {
                                     .foregroundColor(AppTheme.textPrimary)
                             }
                             Spacer()
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(AppTheme.textSecondary)
+                            }
                         }
                         .padding(.horizontal, 20)
 

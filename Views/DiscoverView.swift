@@ -41,7 +41,9 @@ let popularTemplates: [SubscriptionTemplate] = [
 // MARK: - Discover View
 
 struct DiscoverView: View {
+    @EnvironmentObject var manager: SubscriptionManager
     @State private var selectedTemplate: Subscription?
+    @State private var showingLimitAlert = false
 
     let columns = [GridItem(.adaptive(minimum: 155), spacing: 14)]
 
@@ -70,7 +72,11 @@ struct DiscoverView: View {
                             ForEach(popularTemplates) { template in
                                 TemplateCard(template: template)
                                     .onTapGesture {
-                                        selectedTemplate = template.asSubscription
+                                        if manager.isAnonymous && manager.subscriptions.count >= 3 {
+                                            showingLimitAlert = true
+                                        } else {
+                                            selectedTemplate = template.asSubscription
+                                        }
                                     }
                             }
                         }
@@ -84,6 +90,11 @@ struct DiscoverView: View {
             .navigationBarHidden(true)
             .sheet(item: $selectedTemplate) { sub in
                 AddEditSubscriptionView(mode: .template(sub))
+            }
+            .alert("Guest Limit Reached", isPresented: $showingLimitAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Sign up for free in your Profile to add unlimited subscriptions!")
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())

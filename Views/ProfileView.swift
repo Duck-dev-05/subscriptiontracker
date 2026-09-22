@@ -4,6 +4,7 @@ import FirebaseAuth
 struct ProfileView: View {
     @State private var isAnonymous: Bool = Auth.auth().currentUser?.isAnonymous ?? true
     @State private var authStateHandle: AuthStateDidChangeListenerHandle?
+    @State private var showSettings = false
 
     var body: some View {
         NavigationView {
@@ -26,6 +27,9 @@ struct ProfileView: View {
                 if let handle = authStateHandle {
                     Auth.auth().removeStateDidChangeListener(handle)
                 }
+            }
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
@@ -105,6 +109,29 @@ struct ProfileView: View {
                                 .stroke(AppTheme.success.opacity(0.20), lineWidth: 1)
                         )
                 )
+                .padding(.horizontal, 20)
+                
+                // Settings Button
+                Button {
+                    showSettings = true
+                } label: {
+                    HStack {
+                        Image(systemName: "gearshape.fill")
+                        Text("Settings")
+                            .font(.subheadline.bold())
+                    }
+                    .foregroundColor(AppTheme.textPrimary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
+                            .fill(AppTheme.surface)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
+                                    .stroke(AppTheme.border, lineWidth: 1)
+                            )
+                    )
+                }
                 .padding(.horizontal, 20)
                 
                 // Log Out Button

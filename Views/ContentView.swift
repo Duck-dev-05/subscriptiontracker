@@ -3,14 +3,13 @@ import SwiftUI
 // MARK: - Tab Enum
 
 enum AppTab: Int, CaseIterable {
-    case home, discover, statistics, settings, profile
+    case home, discover, statistics, profile
 
     var title: String {
         switch self {
         case .home:       return "Home"
         case .discover:   return "Discover"
         case .statistics: return "Analytics"
-        case .settings:   return "Settings"
         case .profile:    return "Profile"
         }
     }
@@ -20,7 +19,6 @@ enum AppTab: Int, CaseIterable {
         case .home:       return "house.fill"
         case .discover:   return "sparkles.rectangle.stack.fill"
         case .statistics: return "chart.pie.fill"
-        case .settings:   return "gearshape.fill"
         case .profile:    return "person.crop.circle.fill"
         }
     }
@@ -40,8 +38,7 @@ struct ContentView: View {
                 switch selectedTab {
                 case .home:       HomeView()
                 case .discover:   DiscoverView()
-                case .statistics: StatisticsView()
-                case .settings:   SettingsView()
+                case .statistics: StatisticsView(selectedTab: $selectedTab)
                 case .profile:    ProfileView()
                 }
             }

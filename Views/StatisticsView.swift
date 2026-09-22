@@ -2,6 +2,7 @@ import SwiftUI
 
 struct StatisticsView: View {
     @EnvironmentObject var manager: SubscriptionManager
+    @Binding var selectedTab: AppTab
     @State private var animateProgress = false
 
     var totalCost: Double { manager.totalMonthlyCost }
@@ -38,7 +39,9 @@ struct StatisticsView: View {
                         }
                         .padding(.horizontal, 20)
 
-                        if manager.activeSubscriptions.isEmpty {
+                        if manager.isAnonymous {
+                            lockedState
+                        } else if manager.activeSubscriptions.isEmpty {
                             emptyState
                         } else {
                             heroCard.padding(.horizontal, 20)
@@ -204,6 +207,53 @@ struct StatisticsView: View {
             }
         }
         .glassCard(cornerRadius: AppTheme.radiusLg)
+    }
+
+    // MARK: - Locked State
+    
+    private var lockedState: some View {
+        VStack(spacing: 20) {
+            ZStack {
+                Circle()
+                    .fill(AppTheme.accentPurple.opacity(0.12))
+                    .frame(width: 80, height: 80)
+                Image(systemName: "lock.shield.fill")
+                    .font(.system(size: 34))
+                    .foregroundColor(AppTheme.accentPurple)
+            }
+            
+            VStack(spacing: 8) {
+                Text("Analytics Locked")
+                    .font(.title2.bold())
+                    .foregroundColor(AppTheme.textPrimary)
+                
+                Text("Sign up for free to unlock powerful insights and spending breakdowns.")
+                    .font(.subheadline)
+                    .foregroundColor(AppTheme.textSecondary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            Button {
+                selectedTab = .profile
+            } label: {
+                Text("Sign Up to Unlock")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppTheme.radiusMd)
+                            .fill(AppTheme.accentGradient)
+                    )
+                    .shadow(color: AppTheme.accentPurple.opacity(0.4), radius: 12, x: 0, y: 6)
+            }
+            .padding(.top, 10)
+        }
+        .padding(30)
+        .frame(maxWidth: .infinity)
+        .glassCard(cornerRadius: AppTheme.radiusLg, padding: 0)
+        .padding(.horizontal, 20)
+        .padding(.top, 20)
     }
 
     // MARK: - Empty

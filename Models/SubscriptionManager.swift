@@ -5,6 +5,7 @@ import FirebaseAuth
 
 class SubscriptionManager: ObservableObject {
     @Published var subscriptions: [Subscription] = []
+    @Published var isAnonymous: Bool = true
     
     @Published var currencySymbol: String = "$" {
         didSet { UserDefaults.standard.set(currencySymbol, forKey: currencyKey) }
@@ -20,6 +21,7 @@ class SubscriptionManager: ObservableObject {
         
         // Listen for authentication state changes
         authStateListenerHandle = Auth.auth().addStateDidChangeListener { [weak self] auth, user in
+            self?.isAnonymous = user?.isAnonymous ?? true
             if let user = user {
                 self?.listenToFirestore(userId: user.uid)
             } else {

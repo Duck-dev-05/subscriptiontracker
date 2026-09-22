@@ -15,6 +15,7 @@ struct HomeView: View {
     @State private var showingAdd      = false
     @State private var showingAccounts = false
     @State private var sortOption: SortOption = .nextBilling
+    @State private var showingLimitAlert = false
     @State private var appeared = false
 
     var sortedSubscriptions: [Subscription] {
@@ -51,6 +52,11 @@ struct HomeView: View {
             .navigationBarHidden(true)
             .sheet(isPresented: $showingAdd)      { AddEditSubscriptionView(mode: .add) }
             .sheet(isPresented: $showingAccounts) { AccountsView() }
+            .alert("Guest Limit Reached", isPresented: $showingLimitAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Sign up for free in your Profile to add unlimited subscriptions!")
+            }
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
@@ -92,7 +98,13 @@ struct HomeView: View {
                         .overlay(Circle().stroke(AppTheme.border, lineWidth: 1))
                 }
 
-                Button { showingAdd = true } label: {
+                Button { 
+                    if manager.isAnonymous && manager.subscriptions.count >= 3 {
+                        showingLimitAlert = true
+                    } else {
+                        showingAdd = true 
+                    }
+                } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
