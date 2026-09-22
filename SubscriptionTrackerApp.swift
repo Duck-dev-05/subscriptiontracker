@@ -25,8 +25,18 @@ struct SubscriptionTrackerApp: App {
     var body: some Scene {
         WindowGroup {
             if authManager.isChecking {
-                ProgressView()
-                    .scaleEffect(1.5)
+                ZStack {
+                    Color(UIColor.systemBackground).ignoresSafeArea()
+                    VStack(spacing: 30) {
+                        Image(systemName: "cloud.fill")
+                            .font(.system(size: 80))
+                            .foregroundColor(.blue)
+                        
+                        Text("Subscription Tracker")
+                            .font(.largeTitle)
+                            .bold()
+                    }
+                }
             } else if authManager.isAuthenticated {
                 ContentView()
                     .environmentObject(subscriptionManager)
