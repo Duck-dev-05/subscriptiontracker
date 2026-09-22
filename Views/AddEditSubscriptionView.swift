@@ -258,7 +258,7 @@ struct AddEditSubscriptionView: View {
                             TextEditor(text: $notes)
                                 .frame(minHeight: 80)
                                 .foregroundColor(AppTheme.textPrimary)
-                                .scrollContentBackground(.hidden)
+                                .onAppear { UITextView.appearance().backgroundColor = .clear }
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
                         }
