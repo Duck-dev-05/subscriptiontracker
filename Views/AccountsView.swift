@@ -43,7 +43,7 @@ struct AccountsView: View {
             }
             .navigationTitle("Accounts")
             .navigationBarTitleDisplayMode(.inline)
-
+            .customToolbarBackground()
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Done") { dismiss() }
@@ -174,6 +174,6 @@ struct AccountDetailView: View {
         }
         .navigationTitle(accountName)
         .navigationBarTitleDisplayMode(.inline)
-
+        .customToolbarBackground()
     }
 }

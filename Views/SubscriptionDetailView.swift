@@ -57,7 +57,7 @@ struct SubscriptionDetailView: View {
                     .foregroundColor(AppTheme.textPrimary)
             }
         }
-
+        .customToolbarBackground()
         .sheet(isPresented: $showingEdit) {
             AddEditSubscriptionView(mode: .edit(subscription))
         }

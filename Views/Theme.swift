@@ -179,3 +179,29 @@ struct ScaleButtonStyle: ButtonStyle {
             .animation(.spring(response: 0.25, dampingFraction: 0.65), value: configuration.isPressed)
     }
 }
+
+// MARK: - Backward Compatibility Modifiers
+
+extension View {
+    @ViewBuilder
+    func customToolbarBackground() -> some View {
+        if #available(iOS 16.0, *) {
+            self
+                .toolbarBackground(AppTheme.background, for: .navigationBar)
+                .toolbarColorScheme(.dark, for: .navigationBar)
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder
+    func customScrollBackground() -> some View {
+        if #available(iOS 16.0, *) {
+            self.scrollContentBackground(.hidden)
+        } else {
+            self.onAppear {
+                UITextView.appearance().backgroundColor = .clear
+            }
+        }
+    }
+}

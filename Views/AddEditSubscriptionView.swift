@@ -258,7 +258,7 @@ struct AddEditSubscriptionView: View {
                             TextEditor(text: $notes)
                                 .frame(minHeight: 80)
                                 .foregroundColor(AppTheme.textPrimary)
-                                .onAppear { UITextView.appearance().backgroundColor = .clear }
+                                .customScrollBackground()
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
                         }
@@ -294,7 +294,7 @@ struct AddEditSubscriptionView: View {
             }
             .navigationTitle(mode.title)
             .navigationBarTitleDisplayMode(.inline)
-
+            .customToolbarBackground()
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
