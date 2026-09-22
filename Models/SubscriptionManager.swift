@@ -23,6 +23,12 @@ class SubscriptionManager: ObservableObject {
             if let user = user {
                 self?.listenToFirestore(userId: user.uid)
             } else {
+                // If no user is found, automatically sign in anonymously
+                Auth.auth().signInAnonymously { result, error in
+                    if let error = error {
+                        print("Error signing in anonymously: \(error.localizedDescription)")
+                    }
+                }
                 self?.subscriptions = []
                 self?.listenerRegistration?.remove()
             }
