@@ -5,40 +5,52 @@ struct SubscriptionRowView: View {
     let subscription: Subscription
 
     var accentColor: Color {
-        Color(hex: subscription.colorHex) ?? .blue
+        Color(hex: subscription.colorHex) ?? AppTheme.accentPurple
     }
 
     var body: some View {
-        HStack(spacing: 16) {
-            // Icon Avatar
+        HStack(spacing: 14) {
+            // Icon with gradient ring
             ZStack {
                 Circle()
-                    .fill(accentColor.opacity(0.2))
-                    .frame(width: 44, height: 44)
+                    .stroke(
+                        LinearGradient(
+                            colors: [accentColor, accentColor.opacity(0.25)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 2
+                    )
+                    .frame(width: 50, height: 50)
+
+                Circle()
+                    .fill(accentColor.opacity(0.12))
+                    .frame(width: 46, height: 46)
+
                 Text(subscription.icon)
-                    .font(.system(size: 24))
+                    .font(.system(size: 22))
             }
 
-            // Name + category
-            VStack(alignment: .leading, spacing: 4) {
+            // Name + meta
+            VStack(alignment: .leading, spacing: 5) {
                 Text(subscription.name)
-                    .font(.headline)
-                    .foregroundColor(.primary)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(AppTheme.textPrimary)
 
                 HStack(spacing: 6) {
                     Text(subscription.category.emoji)
-                        .font(.caption)
+                        .font(.caption2)
                     Text(subscription.category.rawValue)
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(AppTheme.textSecondary)
 
-                    Text("•")
-                        .foregroundColor(.secondary)
-                        .font(.caption)
-
-                    Text(dateLabel)
-                        .font(.caption)
-                        .foregroundColor(subscription.isDueSoon ? .red : .secondary)
+                    if subscription.isDueSoon {
+                        PillTag(
+                            text: dateLabel,
+                            color: subscription.daysUntilNextBilling <= 2
+                                ? AppTheme.danger : AppTheme.warning
+                        )
+                    }
                 }
             }
 
@@ -47,15 +59,23 @@ struct SubscriptionRowView: View {
             // Price
             VStack(alignment: .trailing, spacing: 3) {
                 Text("\(manager.currencySymbol)\(String(format: "%.2f", subscription.price))")
-                    .font(.headline)
-                    .foregroundColor(.primary)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(AppTheme.textPrimary)
 
                 Text(subscription.billingCycle.abbreviation)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(AppTheme.textSecondary)
             }
         }
-        .padding(.vertical, 4)
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
+                .fill(AppTheme.surface)
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
+                        .stroke(AppTheme.border, lineWidth: 1)
+                )
+        )
     }
 
     private var dateLabel: String {
