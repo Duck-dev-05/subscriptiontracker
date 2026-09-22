@@ -52,11 +52,7 @@ struct HomeView: View {
             .navigationBarHidden(true)
             .sheet(isPresented: $showingAdd)      { AddEditSubscriptionView(mode: .add) }
             .sheet(isPresented: $showingAccounts) { AccountsView() }
-            .alert("Guest Limit Reached", isPresented: $showingLimitAlert) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text("Sign up for free in your Profile to add unlimited subscriptions!")
-            }
+            .sheet(isPresented: $showingLimitAlert) { PaywallView() }
         }
         .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {

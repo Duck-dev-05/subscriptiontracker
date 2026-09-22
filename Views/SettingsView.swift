@@ -71,6 +71,24 @@ struct SettingsView: View {
                             }
                         }
 
+                        // Personalize
+                        settingsCard(title: "Personalize", icon: "paintpalette.fill") {
+                            NavigationLink(destination: CategoryManagementView()) {
+                                HStack {
+                                    Image(systemName: "tag.fill")
+                                        .foregroundColor(AppTheme.accentPurple)
+                                    Text("Manage Categories")
+                                        .font(.subheadline)
+                                        .foregroundColor(AppTheme.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.bold())
+                                        .foregroundColor(AppTheme.textTertiary)
+                                }
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+
                         // Data
                         settingsCard(title: "Data", icon: "externaldrive.fill") {
                             NavigationLink(destination: ArchiveView()) {

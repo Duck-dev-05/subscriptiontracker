@@ -28,12 +28,16 @@ enum AppTab: Int, CaseIterable {
 
 struct ContentView: View {
     @State private var selectedTab: AppTab = .home
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            AppTheme.background.ignoresSafeArea()
+        if !hasSeenOnboarding {
+            OnboardingView()
+        } else {
+            ZStack(alignment: .bottom) {
+                AppTheme.background.ignoresSafeArea()
 
-            // Page content
+                // Page content
             Group {
                 switch selectedTab {
                 case .home:       HomeView()
@@ -46,10 +50,11 @@ struct ContentView: View {
 
             // Floating tab bar
             FloatingTabBar(selectedTab: $selectedTab)
-        }
-        .preferredColorScheme(.dark)
-        .onAppear {
-            NotificationManager.shared.requestPermission()
+            }
+            .preferredColorScheme(.dark)
+            .onAppear {
+                NotificationManager.shared.requestPermission()
+            }
         }
     }
 }
