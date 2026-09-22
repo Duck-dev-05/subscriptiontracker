@@ -5,11 +5,19 @@ import FirebaseCore
 import SwiftUI
 
 class AuthenticationManager: ObservableObject {
-    @Published var isAuthenticated: Bool = Auth.auth().currentUser != nil
+    @Published var isAuthenticated: Bool
     @Published var isChecking: Bool = true
     @Published var errorMsg: String?
 
     init() {
+        // Ensure Firebase is configured before accessing any Auth features
+        if FirebaseApp.app() == nil {
+            FirebaseApp.configure()
+        }
+        
+        // Now it's safe to check the current user
+        self.isAuthenticated = Auth.auth().currentUser != nil
+        
         // Listen to Firebase auth state changes to reliably check if a user is logged in
         Auth.auth().addStateDidChangeListener { [weak self] auth, user in
             DispatchQueue.main.async {

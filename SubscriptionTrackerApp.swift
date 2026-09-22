@@ -5,9 +5,6 @@ import GoogleSignIn
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    if FirebaseApp.app() == nil {
-        FirebaseApp.configure()
-    }
     return true
   }
 }
@@ -18,6 +15,12 @@ struct SubscriptionTrackerApp: App {
     
     @StateObject private var subscriptionManager = SubscriptionManager()
     @StateObject private var authManager = AuthenticationManager()
+
+    init() {
+        if FirebaseApp.app() == nil {
+            FirebaseApp.configure()
+        }
+    }
 
     var body: some Scene {
         WindowGroup {
