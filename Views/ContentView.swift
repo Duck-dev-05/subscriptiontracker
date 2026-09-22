@@ -3,14 +3,13 @@ import SwiftUI
 // MARK: - Tab Enum
 
 enum AppTab: Int, CaseIterable {
-    case home, calendar, discover, statistics, settings
+    case home, statistics, profile, settings
 
     var title: String {
         switch self {
         case .home:       return "Home"
-        case .calendar:   return "Calendar"
-        case .discover:   return "Discover"
         case .statistics: return "Analytics"
+        case .profile:    return "Profile"
         case .settings:   return "Settings"
         }
     }
@@ -18,9 +17,8 @@ enum AppTab: Int, CaseIterable {
     var icon: String {
         switch self {
         case .home:       return "house.fill"
-        case .calendar:   return "calendar"
-        case .discover:   return "sparkles.rectangle.stack.fill"
         case .statistics: return "chart.pie.fill"
+        case .profile:    return "person.crop.circle.fill"
         case .settings:   return "gearshape.fill"
         }
     }
@@ -39,23 +37,17 @@ struct ContentView: View {
                 }
                 .tag(AppTab.home)
             
-            CalendarView()
-                .tabItem {
-                    Label(AppTab.calendar.title, systemImage: AppTab.calendar.icon)
-                }
-                .tag(AppTab.calendar)
-            
-            DiscoverView()
-                .tabItem {
-                    Label(AppTab.discover.title, systemImage: AppTab.discover.icon)
-                }
-                .tag(AppTab.discover)
-            
             StatisticsView()
                 .tabItem {
                     Label(AppTab.statistics.title, systemImage: AppTab.statistics.icon)
                 }
                 .tag(AppTab.statistics)
+                
+            ProfileView()
+                .tabItem {
+                    Label(AppTab.profile.title, systemImage: AppTab.profile.icon)
+                }
+                .tag(AppTab.profile)
             
             SettingsView()
                 .tabItem {
