@@ -5,7 +5,7 @@ import FirebaseCore
 import SwiftUI
 
 class AuthenticationManager: ObservableObject {
-    @Published var isAuthenticated: Bool = false
+    @Published var isAuthenticated: Bool = Auth.auth().currentUser != nil
     @Published var errorMsg: String?
 
     init() {
