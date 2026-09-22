@@ -187,7 +187,7 @@ extension View {
     func customToolbarBackground() -> some View {
         if #available(iOS 16.0, *) {
             self
-                .toolbarBackground(AppTheme.background, for: .navigationBar)
+                .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
                 .toolbarColorScheme(.dark, for: .navigationBar)
         } else {
             self
