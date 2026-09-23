@@ -11,6 +11,9 @@ struct ProfileView: View {
     @State private var authStateHandle: AuthStateDidChangeListenerHandle?
     @State private var showSettings = false
     @State private var showPaywall = false
+    
+    @AppStorage("needsManualOnboarding") private var needsManualOnboarding = false
+    @AppStorage("needsGoogleScan") private var needsGoogleScan = false
 
     var body: some View {
         NavigationView {
@@ -42,6 +45,12 @@ struct ProfileView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .fullScreenCover(isPresented: $needsManualOnboarding) {
+            OnboardingPlatformSelectionView()
+        }
+        .fullScreenCover(isPresented: $needsGoogleScan) {
+            AutoScanningView()
+        }
     }
 
     private var profileContent: some View {
@@ -262,6 +271,9 @@ struct LoginView: View {
     @State private var errorMessage = ""
     @State private var isLoading = false
     
+    @AppStorage("needsManualOnboarding") private var needsManualOnboarding = false
+    @AppStorage("needsGoogleScan") private var needsGoogleScan = false
+    
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 24) {
@@ -417,12 +429,14 @@ struct LoginView: View {
                         }
                     } else {
                         isLoading = false
+                        needsManualOnboarding = true
                     }
                 }
             } else {
                 Auth.auth().createUser(withEmail: email, password: password) { result, error in
                     isLoading = false
                     if let error = error { errorMessage = error.localizedDescription }
+                    else { needsManualOnboarding = true }
                 }
             }
         } else {
@@ -445,7 +459,7 @@ struct LoginView: View {
             return
         }
 
-        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController, hint: nil, additionalScopes: ["https://www.googleapis.com/auth/gmail.readonly"]) { result, error in
             if let error = error {
                 errorMessage = error.localizedDescription
                 return
@@ -477,12 +491,14 @@ struct LoginView: View {
                         }
                     } else {
                         isLoading = false
+                        needsGoogleScan = true
                     }
                 }
             } else {
                 Auth.auth().signIn(with: credential) { _, error in
                     isLoading = false
                     if let error = error { errorMessage = error.localizedDescription }
+                    else { needsGoogleScan = true }
                 }
             }
         }
