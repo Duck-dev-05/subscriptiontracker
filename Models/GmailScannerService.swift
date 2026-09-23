@@ -225,7 +225,8 @@ class GmailScannerService {
                     case "music": cat = .music
                     case "gaming": cat = .gaming
                     case "cloud": cat = .cloud
-                    case "software": cat = .software
+                    case "software": cat = .productivity
+                    case "productivity": cat = .productivity
                     default: cat = .other
                     }
                     
