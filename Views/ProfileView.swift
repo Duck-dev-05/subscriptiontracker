@@ -1,5 +1,7 @@
 import SwiftUI
 import FirebaseAuth
+import FirebaseCore
+import GoogleSignIn
 
 struct ProfileView: View {
     @State private var isAnonymous: Bool = Auth.auth().currentUser?.isAnonymous ?? true
@@ -256,6 +258,35 @@ struct LoginView: View {
                     .disabled(isLoading || email.isEmpty || password.isEmpty)
                     .opacity((isLoading || email.isEmpty || password.isEmpty) ? 0.6 : 1.0)
                     .shadow(color: AppTheme.accentPurple.opacity(0.4), radius: 12, x: 0, y: 6)
+                    
+                    HStack {
+                        VStack { Divider().background(AppTheme.border) }
+                        Text("OR")
+                            .font(.caption.bold())
+                            .foregroundColor(AppTheme.textSecondary)
+                        VStack { Divider().background(AppTheme.border) }
+                    }
+                    .padding(.vertical, 10)
+                    
+                    Button(action: signInWithGoogle) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "g.circle.fill") // Placeholder for Google logo
+                                .font(.system(size: 24))
+                            Text("Continue with Google")
+                                .font(.headline)
+                        }
+                        .foregroundColor(AppTheme.textPrimary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: AppTheme.radiusMd)
+                                .fill(AppTheme.surface)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: AppTheme.radiusMd)
+                                        .stroke(AppTheme.border, lineWidth: 1)
+                                )
+                        )
+                    }
                 }
                 .padding(.horizontal, 20)
                 
@@ -299,6 +330,46 @@ struct LoginView: View {
             Auth.auth().signIn(withEmail: email, password: password) { result, error in
                 isLoading = false
                 if let error = error { errorMessage = error.localizedDescription }
+            }
+        }
+    }
+    
+    private func signInWithGoogle() {
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first?.rootViewController else {
+            return
+        }
+
+        GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController) { result, error in
+            if let error = error {
+                errorMessage = error.localizedDescription
+                return
+            }
+
+            guard let user = result?.user,
+                  let idToken = user.idToken?.tokenString
+            else { return }
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                           accessToken: user.accessToken.tokenString)
+            
+            isLoading = true
+            
+            if let currentUser = Auth.auth().currentUser, currentUser.isAnonymous {
+                currentUser.link(with: credential) { _, error in
+                    isLoading = false
+                    if let error = error { errorMessage = error.localizedDescription }
+                }
+            } else {
+                Auth.auth().signIn(with: credential) { _, error in
+                    isLoading = false
+                    if let error = error { errorMessage = error.localizedDescription }
+                }
             }
         }
     }

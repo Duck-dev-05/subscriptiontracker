@@ -2,13 +2,11 @@ import SwiftUI
 
 struct CategoryManagementView: View {
     @Environment(\.dismiss) private var dismiss
-    
-    // In a fully dynamic version, these would be fetched from CoreData or UserDefaults
-    @State private var categories = SubscriptionCategory.allCases.map { 
-        CategoryItem(category: $0, isEnabled: true) 
-    }
+    @EnvironmentObject var manager: SubscriptionManager
     
     @State private var showingAddCategory = false
+    @State private var newCategoryName = ""
+    @State private var newCategoryEmoji = "📦"
     
     var body: some View {
         NavigationView {
@@ -39,37 +37,35 @@ struct CategoryManagementView: View {
                         }
                         .padding(.horizontal, 20)
                         
-                        // Info Card
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack(spacing: 12) {
-                                Image(systemName: "lightbulb.fill")
-                                    .font(.title2)
-                                    .foregroundColor(AppTheme.accentPurple)
-                                Text("Manage your categories to keep your subscriptions organized your way.")
-                                    .font(.subheadline)
+                        // Default Categories List
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Default Categories")
+                                .font(.caption.bold())
+                                .foregroundColor(AppTheme.textSecondary)
+                            
+                            ForEach(SubscriptionCategory.defaultCases) { category in
+                                CategoryRow(category: category, isCustom: false)
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        
+                        // Custom Categories List
+                        if !manager.customCategories.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Custom Categories")
+                                    .font(.caption.bold())
                                     .foregroundColor(AppTheme.textSecondary)
+                                
+                                ForEach(manager.customCategories) { category in
+                                    CategoryRow(category: category, isCustom: true) {
+                                        manager.customCategories.removeAll { $0.id == category.id }
+                                    }
+                                }
                             }
+                            .padding(.horizontal, 20)
                         }
-                        .padding(16)
-                        .background(
-                            RoundedRectangle(cornerRadius: AppTheme.radiusMd)
-                                .fill(AppTheme.surface)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: AppTheme.radiusMd)
-                                        .stroke(AppTheme.border, lineWidth: 1)
-                                )
-                        )
-                        .padding(.horizontal, 20)
                         
-                        // Categories List
-                        VStack(spacing: 12) {
-                            ForEach($categories) { $item in
-                                CategoryRow(item: $item)
-                            }
-                        }
-                        .padding(.horizontal, 20)
-                        
-                        // Add Button Placeholder
+                        // Add Button
                         Button {
                             showingAddCategory = true
                         } label: {
@@ -99,24 +95,71 @@ struct CategoryManagementView: View {
                 }
             }
             .navigationBarHidden(true)
-            .alert("Feature in Development", isPresented: $showingAddCategory) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text("Adding custom categories requires updating the local data model. This UI is ready for when that feature is implemented!")
+            .sheet(isPresented: $showingAddCategory) {
+                AddCategorySheet(name: $newCategoryName, emoji: $newCategoryEmoji) {
+                    let newCat = SubscriptionCategory(rawValue: newCategoryName, emoji: newCategoryEmoji)
+                    manager.customCategories.append(newCat)
+                    newCategoryName = ""
+                    newCategoryEmoji = "📦"
+                    showingAddCategory = false
+                }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
-struct CategoryItem: Identifiable {
-    let id = UUID()
-    let category: SubscriptionCategory
-    var isEnabled: Bool
+struct AddCategorySheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var name: String
+    @Binding var emoji: String
+    var onSave: () -> Void
+    
+    var body: some View {
+        NavigationView {
+            ZStack {
+                AppTheme.background.ignoresSafeArea()
+                
+                VStack(spacing: 20) {
+                    HStack {
+                        TextField("Emoji", text: $emoji)
+                            .font(.system(size: 30))
+                            .frame(width: 60, height: 60)
+                            .multilineTextAlignment(.center)
+                            .background(AppTheme.surface)
+                            .cornerRadius(12)
+                        
+                        TextField("Category Name", text: $name)
+                            .font(.headline)
+                            .padding()
+                            .background(AppTheme.surface)
+                            .cornerRadius(12)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                    
+                    Spacer()
+                }
+            }
+            .navigationTitle("New Category")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { onSave() }
+                        .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+        }
+    }
 }
 
 struct CategoryRow: View {
-    @Binding var item: CategoryItem
+    let category: SubscriptionCategory
+    let isCustom: Bool
+    var onDelete: (() -> Void)? = nil
     
     var body: some View {
         HStack(spacing: 16) {
@@ -125,19 +168,24 @@ struct CategoryRow: View {
                     .fill(AppTheme.surface)
                     .frame(width: 44, height: 44)
                 
-                Text(item.category.emoji)
+                Text(category.emoji)
                     .font(.system(size: 20))
             }
             
-            Text(item.category.rawValue)
+            Text(category.rawValue)
                 .font(.subheadline.bold())
-                .foregroundColor(item.isEnabled ? AppTheme.textPrimary : AppTheme.textTertiary)
+                .foregroundColor(AppTheme.textPrimary)
             
             Spacer()
             
-            Toggle("", isOn: $item.isEnabled)
-                .labelsHidden()
-                .tint(AppTheme.accentPurple)
+            if isCustom {
+                Button {
+                    onDelete?()
+                } label: {
+                    Image(systemName: "trash")
+                        .foregroundColor(.red)
+                }
+            }
         }
         .padding(12)
         .background(
@@ -148,6 +196,5 @@ struct CategoryRow: View {
                         .stroke(AppTheme.border, lineWidth: 1)
                 )
         )
-        .opacity(item.isEnabled ? 1.0 : 0.6)
     }
 }

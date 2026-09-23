@@ -167,7 +167,7 @@ struct AddEditSubscriptionView: View {
                                     .foregroundColor(AppTheme.textSecondary)
                                 Spacer()
                                 Picker("Category", selection: $category) {
-                                    ForEach(SubscriptionCategory.allCases, id: \.self) { cat in
+                                    ForEach(SubscriptionCategory.defaultCases + manager.customCategories, id: \.self) { cat in
                                         Text(cat.emoji + " " + cat.rawValue).tag(cat)
                                     }
                                 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var storeManager = StoreManager.shared
     
     var body: some View {
         ZStack {
@@ -63,12 +64,12 @@ struct PaywallView: View {
                     // Pricing Card
                     VStack(spacing: 16) {
                         Button {
-                            // TODO: Add purchase action
+                            storeManager.purchasePro()
                         } label: {
                             VStack(spacing: 4) {
-                                Text("Upgrade to Pro")
+                                Text(storeManager.isPro ? "Purchased!" : "Upgrade to Pro")
                                     .font(.headline)
-                                Text("$4.99 / month")
+                                Text(storeManager.proPrice)
                                     .font(.subheadline)
                                     .opacity(0.8)
                             }
@@ -86,7 +87,15 @@ struct PaywallView: View {
                                     )
                             )
                         }
+                        .disabled(storeManager.isPro)
                         .shadow(color: AppTheme.accentPurple.opacity(0.4), radius: 12, x: 0, y: 6)
+                        
+                        Button("Restore Purchases") {
+                            storeManager.restorePurchases()
+                        }
+                        .font(.footnote.bold())
+                        .foregroundColor(AppTheme.textSecondary)
+                        .padding(.top, 4)
                         
                         Text("Cancel anytime. Terms & Conditions apply.")
                             .font(.caption2)
@@ -95,6 +104,11 @@ struct PaywallView: View {
                     .padding(.horizontal, 24)
                     .padding(.bottom, 30)
                 }
+            }
+        }
+        .onChange(of: storeManager.isPro) { isPro in
+            if isPro {
+                dismiss() // Auto dismiss on purchase
             }
         }
     }

@@ -34,28 +34,35 @@ enum BillingCycle: String, Codable, CaseIterable {
     }
 }
 
-enum SubscriptionCategory: String, Codable, CaseIterable {
-    case streaming   = "Streaming"
-    case music       = "Music"
-    case fitness     = "Fitness"
-    case productivity = "Productivity"
-    case gaming      = "Gaming"
-    case news        = "News"
-    case cloud       = "Cloud"
-    case other       = "Other"
-
-    var emoji: String {
-        switch self {
-        case .streaming:    return "🎬"
-        case .music:        return "🎵"
-        case .fitness:      return "💪"
-        case .productivity: return "🖥️"
-        case .gaming:       return "🎮"
-        case .news:         return "📰"
-        case .cloud:        return "☁️"
-        case .other:        return "📦"
-        }
+struct SubscriptionCategory: Codable, Hashable, Equatable, Identifiable {
+    var id: String { rawValue }
+    var rawValue: String
+    var emoji: String
+    
+    init(rawValue: String, emoji: String) {
+        self.rawValue = rawValue
+        self.emoji = emoji
     }
+    
+    init(rawValue: String) {
+        self.rawValue = rawValue
+        // Find default emoji if it matches a default category, otherwise 📦
+        let matched = SubscriptionCategory.defaultCases.first { $0.rawValue == rawValue }
+        self.emoji = matched?.emoji ?? "📦"
+    }
+
+    static let streaming = SubscriptionCategory(rawValue: "Streaming", emoji: "🎬")
+    static let music = SubscriptionCategory(rawValue: "Music", emoji: "🎵")
+    static let fitness = SubscriptionCategory(rawValue: "Fitness", emoji: "💪")
+    static let productivity = SubscriptionCategory(rawValue: "Productivity", emoji: "🖥️")
+    static let gaming = SubscriptionCategory(rawValue: "Gaming", emoji: "🎮")
+    static let news = SubscriptionCategory(rawValue: "News", emoji: "📰")
+    static let cloud = SubscriptionCategory(rawValue: "Cloud", emoji: "☁️")
+    static let other = SubscriptionCategory(rawValue: "Other", emoji: "📦")
+    
+    static let defaultCases: [SubscriptionCategory] = [
+        .streaming, .music, .fitness, .productivity, .gaming, .news, .cloud, .other
+    ]
 }
 
 // MARK: - Model

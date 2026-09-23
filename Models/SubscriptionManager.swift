@@ -8,6 +8,14 @@ class SubscriptionManager: ObservableObject {
     @Published var subscriptions: [Subscription] = []
     @Published var isAnonymous: Bool = true
     
+    @Published var customCategories: [SubscriptionCategory] = [] {
+        didSet {
+            if let data = try? JSONEncoder().encode(customCategories) {
+                UserDefaults.standard.set(data, forKey: "CustomCategories")
+            }
+        }
+    }
+
     @Published var currencySymbol: String = "$" {
         didSet { UserDefaults.standard.set(currencySymbol, forKey: currencyKey) }
     }
@@ -19,6 +27,10 @@ class SubscriptionManager: ObservableObject {
 
     init() {
         currencySymbol = UserDefaults.standard.string(forKey: currencyKey) ?? "$"
+        if let data = UserDefaults.standard.data(forKey: "CustomCategories"),
+           let decoded = try? JSONDecoder().decode([SubscriptionCategory].self, from: data) {
+            customCategories = decoded
+        }
         
         // 1. Instantly load local data
         fetchLocalData()
