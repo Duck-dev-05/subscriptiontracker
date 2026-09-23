@@ -37,6 +37,7 @@ targets:
       # DEVELOPMENT_TEAM: "YOUR_TEAM_ID" # You must replace this with your Apple Developer Team ID
     info:
       properties:
+        GIDClientID: "1034308202455-cf35fd24g97ncmmv6b3kdr7emcdq2n74.apps.googleusercontent.com"
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - "com.googleusercontent.apps.1034308202455-cf35fd24g97ncmmv6b3kdr7emcdq2n74"
