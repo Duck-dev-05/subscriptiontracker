@@ -68,7 +68,7 @@ class StoreManager: ObservableObject {
     private func updateCustomerProductStatus() async {
         var isSubscribed = false
         for await result in Transaction.currentEntitlements {
-            if case .success(let transaction) = result {
+            if case .verified(let transaction) = result {
                 if transaction.productID == "com.subscriptiontracker.pro.monthly" {
                     isSubscribed = true
                 }
@@ -91,7 +91,7 @@ class StoreManager: ObservableObject {
         }
     }
     
-    private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+    nonisolated private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         switch result {
         case .unverified:
             throw StoreError.failedVerification
