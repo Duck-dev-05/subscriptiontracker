@@ -22,6 +22,7 @@ struct SubscriptionTrackerApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(subscriptionManager)
+                .environmentObject(StoreManager.shared)
                 .onOpenURL { url in
                     GIDSignIn.sharedInstance.handle(url)
                 }

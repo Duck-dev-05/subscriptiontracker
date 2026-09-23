@@ -4,9 +4,13 @@ import FirebaseCore
 import GoogleSignIn
 
 struct ProfileView: View {
+    @EnvironmentObject var manager: SubscriptionManager
+    @EnvironmentObject var storeManager: StoreManager
+    
     @State private var isAnonymous: Bool = Auth.auth().currentUser?.isAnonymous ?? true
     @State private var authStateHandle: AuthStateDidChangeListenerHandle?
     @State private var showSettings = false
+    @State private var showPaywall = false
 
     var body: some View {
         NavigationView {
@@ -33,23 +37,29 @@ struct ProfileView: View {
             .sheet(isPresented: $showSettings) {
                 SettingsView()
             }
+            .sheet(isPresented: $showPaywall) {
+                PaywallView()
+            }
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
 
     private var profileContent: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 20) {
-                // Avatar + name
+            VStack(spacing: 24) {
+                
+                // Avatar + Name
                 VStack(spacing: 16) {
                     ZStack {
                         Circle()
-                            .fill(AppTheme.accentGradient)
+                            .fill(storeManager.isPro ? 
+                                  LinearGradient(colors: [Color(hex: "FFD700")!, Color(hex: "FDB931")!], startPoint: .topLeading, endPoint: .bottomTrailing) :
+                                  AppTheme.accentGradient)
                             .frame(width: 92, height: 92)
-                            .shadow(color: AppTheme.accentPurple.opacity(0.42),
+                            .shadow(color: storeManager.isPro ? Color(hex: "FFD700")!.opacity(0.4) : AppTheme.accentPurple.opacity(0.42),
                                     radius: 18, x: 0, y: 8)
 
-                        Image(systemName: "person.fill")
+                        Image(systemName: storeManager.isPro ? "crown.fill" : "person.fill")
                             .font(.system(size: 38, weight: .semibold))
                             .foregroundColor(.white)
                     }
@@ -65,7 +75,15 @@ struct ProfileView: View {
                                 .foregroundColor(AppTheme.textPrimary)
                         }
 
-                        if let uid = Auth.auth().currentUser?.uid {
+                        if storeManager.isPro {
+                            Text("Pro Member")
+                                .font(.caption.bold())
+                                .foregroundColor(Color(hex: "FFD700"))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 4)
+                                .background(Color(hex: "FFD700")!.opacity(0.15))
+                                .clipShape(Capsule())
+                        } else if let uid = Auth.auth().currentUser?.uid {
                             Text("ID: \(uid.prefix(8))…")
                                 .font(.caption)
                                 .foregroundColor(AppTheme.textSecondary)
@@ -77,6 +95,50 @@ struct ProfileView: View {
                     }
                 }
                 .padding(.top, 20)
+                
+                // User Stats
+                HStack(spacing: 16) {
+                    statBox(title: "Active Subs", value: "\(manager.activeSubscriptions.count)", icon: "list.bullet.rectangle.fill", color: .blue)
+                    statBox(title: "Monthly", value: "\(manager.currencySymbol)\(String(format: "%.0f", manager.totalMonthlyCost))", icon: "chart.bar.fill", color: .green)
+                }
+                .padding(.horizontal, 20)
+
+                // Pro Banner
+                if !storeManager.isPro {
+                    Button {
+                        showPaywall = true
+                    } label: {
+                        HStack(spacing: 16) {
+                            ZStack {
+                                Circle().fill(Color(hex: "FFD700")!.opacity(0.2)).frame(width: 46, height: 46)
+                                Image(systemName: "crown.fill")
+                                    .font(.system(size: 20))
+                                    .foregroundColor(Color(hex: "FFD700"))
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Upgrade to Pro")
+                                    .font(.headline)
+                                    .foregroundColor(AppTheme.textPrimary)
+                                Text("Unlock unlimited subscriptions & more")
+                                    .font(.caption)
+                                    .foregroundColor(AppTheme.textSecondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption.bold())
+                                .foregroundColor(AppTheme.textTertiary)
+                        }
+                        .padding(16)
+                        .background(
+                            RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
+                                .fill(AppTheme.surface)
+                                .overlay(RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous).stroke(Color(hex: "FFD700")!.opacity(0.3), lineWidth: 1))
+                        )
+                    }
+                    .padding(.horizontal, 20)
+                    .buttonStyle(PlainButtonStyle())
+                }
 
                 // Cloud sync badge
                 HStack(spacing: 14) {
@@ -99,8 +161,6 @@ struct ProfileView: View {
                     }
 
                     Spacer()
-
-                    PillTag(text: "Live", color: AppTheme.success)
                 }
                 .padding(16)
                 .background(
@@ -108,59 +168,86 @@ struct ProfileView: View {
                         .fill(AppTheme.surface)
                         .overlay(
                             RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                                .stroke(AppTheme.success.opacity(0.20), lineWidth: 1)
+                                .stroke(AppTheme.border, lineWidth: 1)
                         )
                 )
                 .padding(.horizontal, 20)
                 
-                // Settings Button
-                Button {
-                    showSettings = true
-                } label: {
-                    HStack {
-                        Image(systemName: "gearshape.fill")
-                        Text("Settings")
-                            .font(.subheadline.bold())
+                // Actions
+                VStack(spacing: 12) {
+                    actionButton(title: "Settings", icon: "gearshape.fill", color: AppTheme.textPrimary) { showSettings = true }
+                    
+                    Button {
+                        try? Auth.auth().signOut()
+                    } label: {
+                        HStack {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                            Text("Log Out")
+                                .font(.subheadline.bold())
+                        }
+                        .foregroundColor(AppTheme.danger)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
+                                .fill(AppTheme.danger.opacity(0.08))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
+                                        .stroke(AppTheme.danger.opacity(0.25), lineWidth: 1)
+                                )
+                        )
                     }
-                    .foregroundColor(AppTheme.textPrimary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15)
-                    .background(
-                        RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                            .fill(AppTheme.surface)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                                    .stroke(AppTheme.border, lineWidth: 1)
-                            )
-                    )
-                }
-                .padding(.horizontal, 20)
-                
-                // Log Out Button
-                Button {
-                    try? Auth.auth().signOut()
-                } label: {
-                    HStack {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                        Text("Log Out")
-                            .font(.subheadline.bold())
-                    }
-                    .foregroundColor(AppTheme.danger)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 15)
-                    .background(
-                        RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                            .fill(AppTheme.danger.opacity(0.08))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                                    .stroke(AppTheme.danger.opacity(0.25), lineWidth: 1)
-                            )
-                    )
                 }
                 .padding(.horizontal, 20)
 
                 Color.clear.frame(height: 110)
             }
+        }
+    }
+    
+    private func statBox(title: String, value: String, icon: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundColor(color)
+                Spacer()
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(value)
+                    .font(.title2.bold())
+                    .foregroundColor(AppTheme.textPrimary)
+                Text(title)
+                    .font(.caption)
+                    .foregroundColor(AppTheme.textSecondary)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
+                .fill(AppTheme.surface)
+                .overlay(RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous).stroke(AppTheme.border, lineWidth: 1))
+        )
+    }
+    
+    private func actionButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack {
+                Image(systemName: icon)
+                Text(title)
+                    .font(.subheadline.bold())
+            }
+            .foregroundColor(color)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
+                    .fill(AppTheme.surface)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
+                            .stroke(AppTheme.border, lineWidth: 1)
+                    )
+            )
         }
     }
 }
