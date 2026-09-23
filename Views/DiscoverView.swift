@@ -25,18 +25,7 @@ struct SubscriptionTemplate: Identifiable {
 }
 
 // Category enum cases mapped to valid SubscriptionCategory values
-let popularTemplates: [SubscriptionTemplate] = [
-    SubscriptionTemplate(name: "Netflix",              price: 15.49,  cycle: .monthly, category: .streaming,    icon: "🎬", colorHex: "E50914"),
-    SubscriptionTemplate(name: "Spotify",              price: 10.99,  cycle: .monthly, category: .music,        icon: "🎵", colorHex: "1DB954"),
-    SubscriptionTemplate(name: "Amazon Prime",         price: 139.00, cycle: .yearly,  category: .other,        icon: "📦", colorHex: "00A8E1"),
-    SubscriptionTemplate(name: "Disney+",              price: 7.99,   cycle: .monthly, category: .streaming,    icon: "✨", colorHex: "113CCF"),
-    SubscriptionTemplate(name: "Apple Music",          price: 10.99,  cycle: .monthly, category: .music,        icon: "🍎", colorHex: "FA243C"),
-    SubscriptionTemplate(name: "Gym",                  price: 50.00,  cycle: .monthly, category: .fitness,      icon: "💪", colorHex: "2C2C2C"),
-    SubscriptionTemplate(name: "iCloud+",              price: 2.99,   cycle: .monthly, category: .cloud,        icon: "☁️", colorHex: "007AFF"),
-    SubscriptionTemplate(name: "PlayStation Plus",     price: 17.99,  cycle: .monthly, category: .gaming,       icon: "🎮", colorHex: "003791"),
-    SubscriptionTemplate(name: "Xbox Game Pass",       price: 16.99,  cycle: .monthly, category: .gaming,       icon: "🕹️", colorHex: "107C10"),
-    SubscriptionTemplate(name: "Adobe Creative Cloud", price: 54.99,  cycle: .monthly, category: .productivity, icon: "🎨", colorHex: "FF0000"),
-]
+let popularTemplates: [SubscriptionTemplate] = []
 
 // MARK: - Discover View
 
@@ -68,19 +57,34 @@ struct DiscoverView: View {
                         }
                         .padding(.horizontal, 20)
 
-                        LazyVGrid(columns: columns, spacing: 14) {
-                            ForEach(popularTemplates) { template in
-                                TemplateCard(template: template)
-                                    .onTapGesture {
-                                        if manager.isAnonymous && manager.subscriptions.count >= 3 {
-                                            showingLimitAlert = true
-                                        } else {
-                                            selectedTemplate = template.asSubscription
-                                        }
-                                    }
+                        if popularTemplates.isEmpty {
+                            VStack(spacing: 16) {
+                                Image(systemName: "sparkles.rectangle.stack")
+                                    .font(.system(size: 44))
+                                    .foregroundColor(AppTheme.textTertiary)
+                                Text("No Templates")
+                                    .font(.headline)
+                                    .foregroundColor(AppTheme.textSecondary)
+                                Text("Popular apps will appear here soon.")
+                                    .font(.subheadline)
+                                    .foregroundColor(AppTheme.textTertiary)
                             }
+                            .padding(.top, 60)
+                        } else {
+                            LazyVGrid(columns: columns, spacing: 14) {
+                                ForEach(popularTemplates) { template in
+                                    TemplateCard(template: template)
+                                        .onTapGesture {
+                                            if manager.isAnonymous && manager.subscriptions.count >= 3 {
+                                                showingLimitAlert = true
+                                            } else {
+                                                selectedTemplate = template.asSubscription
+                                            }
+                                        }
+                                }
+                            }
+                            .padding(.horizontal, 20)
                         }
-                        .padding(.horizontal, 20)
 
                         Color.clear.frame(height: 110)
                     }
