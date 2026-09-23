@@ -182,13 +182,17 @@ class SubscriptionManager: ObservableObject {
         NotificationManager.shared.cancelNotification(for: subscription.id.uuidString)
     }
 
-    func clearAll() {
+    func clearLocalCache() {
         let context = CoreDataManager.shared.context
         let cdSubs = CoreDataManager.shared.fetchAllSubscriptions()
         for cdSub in cdSubs { context.delete(cdSub) }
         CoreDataManager.shared.saveContext()
         
         subscriptions.removeAll()
+    }
+
+    func clearAll() {
+        clearLocalCache()
         
         if let uid = Auth.auth().currentUser?.uid, !isAnonymous {
             let ref = db.collection("users").document(uid).collection("subscriptions")

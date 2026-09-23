@@ -178,6 +178,7 @@ struct ProfileView: View {
                     actionButton(title: "Settings", icon: "gearshape.fill", color: AppTheme.textPrimary) { showSettings = true }
                     
                     Button {
+                        manager.clearLocalCache()
                         try? Auth.auth().signOut()
                     } label: {
                         HStack {
@@ -400,8 +401,7 @@ struct LoginView: View {
         
         if isSignUp {
             if let user = Auth.auth().currentUser, user.isAnonymous {
-                let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-                user.link(with: credential) { result, error in
+                user.link(withEmail: email, password: password) { result, error in
                     if let error = error {
                         let nsError = error as NSError
                         if nsError.domain == AuthErrorDomain && nsError.code == AuthErrorCode.credentialAlreadyInUse.rawValue {
