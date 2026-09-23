@@ -56,7 +56,7 @@ class SubscriptionManager: ObservableObject {
             var sub = subscriptions[i]
             if sub.nextBillingDate < Date() {
                 // Add payment history
-                let history = PaymentHistory(id: UUID(), amount: sub.price, date: sub.nextBillingDate, status: "Paid")
+                let history = PaymentHistory(id: UUID(), date: sub.nextBillingDate, amount: sub.price)
                 sub.paymentHistory.append(history)
                 
                 // Roll over date
