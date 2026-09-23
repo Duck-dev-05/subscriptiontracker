@@ -60,21 +60,62 @@ struct ProfileView: View {
                 // Avatar + Name
                 VStack(spacing: 16) {
                     ZStack {
-                        Circle()
-                            .fill(storeManager.isPro ? 
-                                  LinearGradient(colors: [Color(hex: "FFD700")!, Color(hex: "FDB931")!], startPoint: .topLeading, endPoint: .bottomTrailing) :
-                                  AppTheme.accentGradient)
-                            .frame(width: 92, height: 92)
-                            .shadow(color: storeManager.isPro ? Color(hex: "FFD700")!.opacity(0.4) : AppTheme.accentPurple.opacity(0.42),
-                                    radius: 18, x: 0, y: 8)
+                        if let photoURL = Auth.auth().currentUser?.photoURL {
+                            AsyncImage(url: photoURL) { phase in
+                                if let image = phase.image {
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 92, height: 92)
+                                        .clipShape(Circle())
+                                } else if phase.error != nil {
+                                    Circle()
+                                        .fill(AppTheme.accentGradient)
+                                        .frame(width: 92, height: 92)
+                                    Image(systemName: "person.fill")
+                                        .font(.system(size: 38, weight: .semibold))
+                                        .foregroundColor(.white)
+                                } else {
+                                    Circle()
+                                        .fill(AppTheme.accentGradient)
+                                        .frame(width: 92, height: 92)
+                                    ProgressView().tint(.white)
+                                }
+                            }
+                            
+                            // Pro border if they have a custom photo
+                            if storeManager.isPro {
+                                Circle()
+                                    .stroke(LinearGradient(colors: [Color(hex: "FFD700")!, Color(hex: "FDB931")!], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 4)
+                                    .frame(width: 96, height: 96)
+                            }
+                        } else {
+                            Circle()
+                                .fill(storeManager.isPro ? 
+                                      LinearGradient(colors: [Color(hex: "FFD700")!, Color(hex: "FDB931")!], startPoint: .topLeading, endPoint: .bottomTrailing) :
+                                      AppTheme.accentGradient)
+                                .frame(width: 92, height: 92)
+                                .shadow(color: storeManager.isPro ? Color(hex: "FFD700")!.opacity(0.4) : AppTheme.accentPurple.opacity(0.42),
+                                        radius: 18, x: 0, y: 8)
 
-                        Image(systemName: storeManager.isPro ? "crown.fill" : "person.fill")
-                            .font(.system(size: 38, weight: .semibold))
-                            .foregroundColor(.white)
+                            Image(systemName: storeManager.isPro ? "crown.fill" : "person.fill")
+                                .font(.system(size: 38, weight: .semibold))
+                                .foregroundColor(.white)
+                        }
                     }
 
                     VStack(spacing: 5) {
-                        if let email = Auth.auth().currentUser?.email {
+                        let user = Auth.auth().currentUser
+                        if let displayName = user?.displayName, !displayName.isEmpty {
+                            Text(displayName)
+                                .font(.title2.bold())
+                                .foregroundColor(AppTheme.textPrimary)
+                            if let email = user?.email {
+                                Text(email)
+                                    .font(.subheadline)
+                                    .foregroundColor(AppTheme.textSecondary)
+                            }
+                        } else if let email = user?.email {
                             Text(email)
                                 .font(.title3.bold())
                                 .foregroundColor(AppTheme.textPrimary)

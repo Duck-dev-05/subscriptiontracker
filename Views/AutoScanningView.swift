@@ -6,6 +6,7 @@ struct AutoScanningView: View {
     
     @State private var statusMessage = "Scanning your inbox for subscriptions..."
     @State private var isScanning = true
+    @State private var scanFailed = false
     @State private var foundCount = 0
     
     var body: some View {
@@ -17,6 +18,10 @@ struct AutoScanningView: View {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: AppTheme.accentPurple))
                         .scaleEffect(1.5)
+                } else if scanFailed {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(AppTheme.danger)
                 } else {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 60))
@@ -59,6 +64,7 @@ struct AutoScanningView: View {
                 
                 switch result {
                 case .success(let subscriptions):
+                    self.scanFailed = false
                     if subscriptions.isEmpty {
                         self.statusMessage = "No subscriptions found in recent emails."
                     } else {
@@ -69,6 +75,7 @@ struct AutoScanningView: View {
                         }
                     }
                 case .failure(let error):
+                    self.scanFailed = true
                     // In a real app we might handle this better, but for demo we fail gracefully
                     self.statusMessage = "Scan failed or permissions missing. Please add subscriptions manually."
                     print("Scanner error: \(error)")
