@@ -402,9 +402,21 @@ struct LoginView: View {
             if let user = Auth.auth().currentUser, user.isAnonymous {
                 let credential = EmailAuthProvider.credential(withEmail: email, password: password)
                 user.link(with: credential) { result, error in
-                    isLoading = false
                     if let error = error {
-                        errorMessage = error.localizedDescription
+                        let nsError = error as NSError
+                        if nsError.domain == AuthErrorDomain && nsError.code == AuthErrorCode.credentialAlreadyInUse.rawValue {
+                            Auth.auth().signIn(withEmail: email, password: password) { _, signInError in
+                                isLoading = false
+                                if let signInError = signInError {
+                                    errorMessage = signInError.localizedDescription
+                                }
+                            }
+                        } else {
+                            isLoading = false
+                            errorMessage = error.localizedDescription
+                        }
+                    } else {
+                        isLoading = false
                     }
                 }
             } else {
@@ -450,8 +462,22 @@ struct LoginView: View {
             
             if let currentUser = Auth.auth().currentUser, currentUser.isAnonymous {
                 currentUser.link(with: credential) { _, error in
-                    isLoading = false
-                    if let error = error { errorMessage = error.localizedDescription }
+                    if let error = error {
+                        let nsError = error as NSError
+                        if nsError.domain == AuthErrorDomain && nsError.code == AuthErrorCode.credentialAlreadyInUse.rawValue {
+                            Auth.auth().signIn(with: credential) { _, signInError in
+                                isLoading = false
+                                if let signInError = signInError {
+                                    errorMessage = signInError.localizedDescription
+                                }
+                            }
+                        } else {
+                            isLoading = false
+                            errorMessage = error.localizedDescription
+                        }
+                    } else {
+                        isLoading = false
+                    }
                 }
             } else {
                 Auth.auth().signIn(with: credential) { _, error in

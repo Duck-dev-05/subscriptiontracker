@@ -39,12 +39,24 @@ class SubscriptionManager: ObservableObject {
         authStateListenerHandle = Auth.auth().addStateDidChangeListener { [weak self] auth, user in
             self?.isAnonymous = user?.isAnonymous ?? true
             if let user = user {
+                self?.syncAllLocalToCloud()
                 self?.listenToFirestore(userId: user.uid)
             } else {
                 Auth.auth().signInAnonymously { result, error in
                     if let error = error { print("Error signing in anonymously: \(error)") }
                 }
                 self?.listenerRegistration?.remove()
+            }
+        }
+    }
+    
+    private func syncAllLocalToCloud() {
+        guard !isAnonymous, let uid = Auth.auth().currentUser?.uid else { return }
+        for sub in subscriptions {
+            do {
+                try db.collection("users").document(uid).collection("subscriptions").document(sub.id.uuidString).setData(from: sub)
+            } catch {
+                print("Error syncing to Firestore: \(error)")
             }
         }
     }
