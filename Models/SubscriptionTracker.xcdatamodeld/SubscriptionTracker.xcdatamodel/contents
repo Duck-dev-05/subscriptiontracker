@@ -11,5 +11,7 @@
         <attribute name="icon" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="accountName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isArchived" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="paymentHistoryData" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
 </model>

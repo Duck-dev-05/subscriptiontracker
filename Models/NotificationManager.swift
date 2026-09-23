@@ -50,4 +50,11 @@ class NotificationManager {
     func cancelAllNotifications() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
+
+    func scheduleAllNotifications(for subscriptions: [Subscription]) {
+        cancelAllNotifications()
+        for subscription in subscriptions {
+            scheduleNotification(for: subscription)
+        }
+    }
 }

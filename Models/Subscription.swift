@@ -24,6 +24,14 @@ enum BillingCycle: String, Codable, CaseIterable {
         case .yearly:  return price / 12.0
         }
     }
+
+    var dateComponent: DateComponents {
+        switch self {
+        case .weekly:  return DateComponents(day: 7)
+        case .monthly: return DateComponents(month: 1)
+        case .yearly:  return DateComponents(year: 1)
+        }
+    }
 }
 
 enum SubscriptionCategory: String, Codable, CaseIterable {

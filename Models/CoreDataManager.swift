@@ -52,4 +52,53 @@ public class CDSubscription: NSManagedObject {
     @NSManaged public var icon: String?
     @NSManaged public var notes: String?
     @NSManaged public var accountName: String?
+    @NSManaged public var isArchived: Bool
+    @NSManaged public var paymentHistoryData: Data?
+
+    var toSubscription: Subscription? {
+        guard let id = id,
+              let name = name,
+              let billingCycleStr = billingCycle,
+              let cycle = BillingCycle(rawValue: billingCycleStr),
+              let nextBillingDate = nextBillingDate,
+              let categoryStr = category,
+              let subCategory = SubscriptionCategory(rawValue: categoryStr)
+        else { return nil }
+        
+        var history: [PaymentHistory] = []
+        if let data = paymentHistoryData,
+           let decoded = try? JSONDecoder().decode([PaymentHistory].self, from: data) {
+            history = decoded
+        }
+
+        return Subscription(
+            id: id,
+            name: name,
+            price: price,
+            billingCycle: cycle,
+            nextBillingDate: nextBillingDate,
+            colorHex: colorHex ?? "6C63FF",
+            category: subCategory,
+            icon: icon ?? "📦",
+            notes: notes ?? "",
+            accountName: accountName,
+            paymentHistory: history,
+            isArchived: isArchived
+        )
+    }
+
+    func update(from sub: Subscription) {
+        self.id = sub.id
+        self.name = sub.name
+        self.price = sub.price
+        self.billingCycle = sub.billingCycle.rawValue
+        self.nextBillingDate = sub.nextBillingDate
+        self.colorHex = sub.colorHex
+        self.category = sub.category.rawValue
+        self.icon = sub.icon
+        self.notes = sub.notes
+        self.accountName = sub.accountName
+        self.isArchived = sub.isArchived
+        self.paymentHistoryData = try? JSONEncoder().encode(sub.paymentHistory)
+    }
 }
