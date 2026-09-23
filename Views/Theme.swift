@@ -88,15 +88,15 @@ let presetColors: [(name: String, hex: String)] = [
 
 extension SubscriptionCategory {
     var accentColor: Color {
-        switch self {
-        case .streaming:    return Color(hex: "FF2D55")!
-        case .music:        return Color(hex: "7C3AED")!
-        case .fitness:      return Color(hex: "34C759")!
-        case .productivity: return Color(hex: "007AFF")!
-        case .gaming:       return Color(hex: "FF9500")!
-        case .news:         return Color(hex: "8E8E93")!
-        case .cloud:        return Color(hex: "5AC8FA")!
-        case .other:        return Color.white.opacity(0.45)
+        switch self.rawValue {
+        case SubscriptionCategory.streaming.rawValue:    return Color(hex: "FF2D55")!
+        case SubscriptionCategory.music.rawValue:        return Color(hex: "7C3AED")!
+        case SubscriptionCategory.fitness.rawValue:      return Color(hex: "34C759")!
+        case SubscriptionCategory.productivity.rawValue: return Color(hex: "007AFF")!
+        case SubscriptionCategory.gaming.rawValue:       return Color(hex: "FF9500")!
+        case SubscriptionCategory.news.rawValue:         return Color(hex: "8E8E93")!
+        case SubscriptionCategory.cloud.rawValue:        return Color(hex: "5AC8FA")!
+        default:                                         return Color.white.opacity(0.45)
         }
     }
 }

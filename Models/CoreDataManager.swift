@@ -61,9 +61,10 @@ public class CDSubscription: NSManagedObject {
               let billingCycleStr = billingCycle,
               let cycle = BillingCycle(rawValue: billingCycleStr),
               let nextBillingDate = nextBillingDate,
-              let categoryStr = category,
-              let subCategory = SubscriptionCategory(rawValue: categoryStr)
+              let categoryStr = category
         else { return nil }
+        
+        let subCategory = SubscriptionCategory(rawValue: categoryStr)
         
         var history: [PaymentHistory] = []
         if let data = paymentHistoryData,
