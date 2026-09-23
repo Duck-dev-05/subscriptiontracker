@@ -80,6 +80,7 @@ struct Subscription: Identifiable, Codable {
     var accountName: String? // Which account it belongs to
     var paymentHistory: [PaymentHistory] = []
     var isArchived: Bool = false
+    var currencyCode: String = "USD"
 
     var displayAccountName: String {
         if let acc = accountName?.trimmingCharacters(in: .whitespacesAndNewlines), !acc.isEmpty {
@@ -116,7 +117,8 @@ struct Subscription: Identifiable, Codable {
         notes: String = "",
         accountName: String? = nil,
         paymentHistory: [PaymentHistory] = [],
-        isArchived: Bool = false
+        isArchived: Bool = false,
+        currencyCode: String = "USD"
     ) {
         self.id = id
         self.name = name
@@ -130,6 +132,7 @@ struct Subscription: Identifiable, Codable {
         self.accountName = accountName
         self.paymentHistory = paymentHistory
         self.isArchived = isArchived
+        self.currencyCode = currencyCode
     }
 }
 

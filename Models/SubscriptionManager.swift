@@ -16,17 +16,14 @@ class SubscriptionManager: ObservableObject {
         }
     }
 
-    @Published var currencySymbol: String = "$" {
-        didSet { UserDefaults.standard.set(currencySymbol, forKey: currencyKey) }
+    var currencySymbol: String {
+        CurrencyManager.symbol(for: CurrencyManager.shared.baseCurrency)
     }
-
-    private let currencyKey = "CurrencySymbol"
     private var db = Firestore.firestore()
     private var listenerRegistration: ListenerRegistration?
     private var authStateListenerHandle: AuthStateDidChangeListenerHandle?
 
     init() {
-        currencySymbol = UserDefaults.standard.string(forKey: currencyKey) ?? "$"
         if let data = UserDefaults.standard.data(forKey: "CustomCategories"),
            let decoded = try? JSONDecoder().decode([SubscriptionCategory].self, from: data) {
             customCategories = decoded
@@ -207,7 +204,11 @@ class SubscriptionManager: ObservableObject {
     
     var activeSubscriptions: [Subscription] { subscriptions.filter { !$0.isArchived } }
     var archivedSubscriptions: [Subscription] { subscriptions.filter { $0.isArchived } }
-    var totalMonthlyCost: Double { activeSubscriptions.reduce(0) { $0 + $1.monthlyCost } }
+    var totalMonthlyCost: Double { 
+        activeSubscriptions.reduce(0) { total, sub in
+            total + CurrencyManager.shared.convertToBase(amount: sub.monthlyCost, from: sub.currencyCode)
+        }
+    }
     var totalYearlyCost: Double { totalMonthlyCost * 12 }
     var dueSoon: [Subscription] { activeSubscriptions.filter { $0.isDueSoon }.sorted { $0.daysUntilNextBilling < $1.daysUntilNextBilling } }
     

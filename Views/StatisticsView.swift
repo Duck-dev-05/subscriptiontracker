@@ -2,6 +2,7 @@ import SwiftUI
 
 struct StatisticsView: View {
     @EnvironmentObject var manager: SubscriptionManager
+    @ObservedObject var currencyManager = CurrencyManager.shared
     @Binding var selectedTab: AppTab
     @State private var animateProgress = false
 
@@ -10,7 +11,7 @@ struct StatisticsView: View {
     var categoryBreakdown: [(category: SubscriptionCategory, amount: Double, percentage: Double)] {
         var totals: [SubscriptionCategory: Double] = [:]
         for sub in manager.activeSubscriptions {
-            totals[sub.category, default: 0] += sub.monthlyCost
+            totals[sub.category, default: 0] += currencyManager.convertToBase(amount: sub.monthlyCost, from: sub.currencyCode)
         }
         return totals.map { cat, amt in
             let pct = totalCost > 0 ? (amt / totalCost) : 0

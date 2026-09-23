@@ -34,6 +34,7 @@ struct AddEditSubscriptionView: View {
     @State private var colorHex     = "7C3AED"
     @State private var notes        = ""
     @State private var accountName  = ""
+    @State private var currencyCode = "USD"
 
     private let suggestedEmojis: [String] = [
         "📺","🎬","🎵","🎮","💪","📰","☁️","📦","🖥️","🎯",
@@ -81,7 +82,16 @@ struct AddEditSubscriptionView: View {
                                 Divider().background(AppTheme.border)
 
                                 HStack {
-                                    Text(manager.currencySymbol)
+                                    Picker("Currency", selection: $currencyCode) {
+                                        ForEach(CurrencyManager.shared.availableCurrencies, id: \.self) { code in
+                                            Text(code).tag(code)
+                                        }
+                                    }
+                                    .pickerStyle(.menu)
+                                    .tint(accentColor)
+                                    .padding(.leading, 8)
+                                    
+                                    Text(CurrencyManager.symbol(for: currencyCode))
                                         .foregroundColor(AppTheme.textSecondary)
                                         .padding(.leading, 16)
                                     TextField("Price", text: $price)
@@ -334,7 +344,7 @@ struct AddEditSubscriptionView: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 4) {
-                Text(price.isEmpty ? "–" : "\(manager.currencySymbol)\(price)")
+                Text(price.isEmpty ? "–" : "\(CurrencyManager.symbol(for: currencyCode))\(price)")
                     .font(.headline.bold())
                     .foregroundColor(price.isEmpty ? AppTheme.textTertiary : AppTheme.textPrimary)
                 Text(billingCycle.abbreviation)
@@ -398,6 +408,7 @@ struct AddEditSubscriptionView: View {
             colorHex     = sub.colorHex
             notes        = sub.notes
             accountName  = sub.accountName ?? ""
+            currencyCode = sub.currencyCode
         case .add:
             break
         }
@@ -418,7 +429,8 @@ struct AddEditSubscriptionView: View {
             accountName: accountName.trimmingCharacters(in: .whitespaces).isEmpty
                 ? nil : accountName.trimmingCharacters(in: .whitespaces),
             paymentHistory: existingSub?.paymentHistory ?? [],
-            isArchived: existingSub?.isArchived ?? false
+            isArchived: existingSub?.isArchived ?? false,
+            currencyCode: currencyCode
         )
         if case .edit = mode {
             manager.update(sub)

@@ -54,6 +54,7 @@ public class CDSubscription: NSManagedObject {
     @NSManaged public var accountName: String?
     @NSManaged public var isArchived: Bool
     @NSManaged public var paymentHistoryData: Data?
+    @NSManaged public var currencyCode: String?
 
     var toSubscription: Subscription? {
         guard let id = id,
@@ -84,7 +85,8 @@ public class CDSubscription: NSManagedObject {
             notes: notes ?? "",
             accountName: accountName,
             paymentHistory: history,
-            isArchived: isArchived
+            isArchived: isArchived,
+            currencyCode: currencyCode ?? "USD"
         )
     }
 
@@ -101,5 +103,6 @@ public class CDSubscription: NSManagedObject {
         self.accountName = sub.accountName
         self.isArchived = sub.isArchived
         self.paymentHistoryData = try? JSONEncoder().encode(sub.paymentHistory)
+        self.currencyCode = sub.currencyCode
     }
 }

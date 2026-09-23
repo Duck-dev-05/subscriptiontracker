@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A511" minimumToolsVersion="Xcode 13.0" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="CDSubscription" representedClassName="CDSubscription" syncable="YES" codeGenerationType="none">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A511" minimumToolsVersion="Xcode 4.3" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CDSubscription" representedClassName="CDSubscription" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="UUID" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="price" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
@@ -11,7 +11,8 @@
         <attribute name="icon" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="accountName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="isArchived" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="currencyCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isArchived" optional="NO" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="paymentHistoryData" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
 </model>

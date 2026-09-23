@@ -58,7 +58,7 @@ struct SubscriptionRowView: View {
 
             // Price
             VStack(alignment: .trailing, spacing: 3) {
-                Text("\(manager.currencySymbol)\(String(format: "%.2f", subscription.price))")
+                Text("\(CurrencyManager.symbol(for: subscription.currencyCode))\(String(format: "%.2f", subscription.price))")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(AppTheme.textPrimary)
 

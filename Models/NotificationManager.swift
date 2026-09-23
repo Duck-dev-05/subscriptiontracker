@@ -25,8 +25,21 @@ class NotificationManager {
         content.body = "Your \(subscription.name) subscription (\(subscription.billingCycle.abbreviation)) is due on \(subscription.nextBillingDate.formatted(date: .abbreviated, time: .omitted))."
         content.sound = .default
 
-        // Schedule for 24 hours before
-        guard let fireDate = Calendar.current.date(byAdding: .day, value: -1, to: subscription.nextBillingDate) else { return }
+        let daysBefore = UserDefaults.standard.integer(forKey: "reminderDaysBefore")
+        // Default to 1 day if not set but key might be missing (0)
+        let actualDaysBefore = UserDefaults.standard.object(forKey: "reminderDaysBefore") == nil ? 1 : daysBefore
+        
+        let hour = UserDefaults.standard.integer(forKey: "reminderHour")
+        let actualHour = UserDefaults.standard.object(forKey: "reminderHour") == nil ? 9 : hour
+        
+        let minute = UserDefaults.standard.integer(forKey: "reminderMinute")
+        let actualMinute = UserDefaults.standard.object(forKey: "reminderMinute") == nil ? 0 : minute
+
+        // Schedule for X days before
+        guard var fireDate = Calendar.current.date(byAdding: .day, value: -actualDaysBefore, to: subscription.nextBillingDate) else { return }
+        
+        // Set specific time of day
+        fireDate = Calendar.current.date(bySettingHour: actualHour, minute: actualMinute, second: 0, of: fireDate) ?? fireDate
 
         // If the fire date is in the past, don't schedule
         if fireDate < Date() { return }

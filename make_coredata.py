@@ -16,6 +16,9 @@ xml = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <attribute name="icon" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="accountName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="currencyCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isArchived" optional="NO" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="paymentHistoryData" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
 </model>
 """

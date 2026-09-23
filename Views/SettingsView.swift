@@ -5,9 +5,8 @@ struct SettingsView: View {
     @EnvironmentObject var manager: SubscriptionManager
     @Environment(\.dismiss) private var dismiss
     @State private var showingWipeAlert = false
-
-    let currencies = ["$", "£", "€", "¥", "₹"]
-
+    @ObservedObject var currencyManager = CurrencyManager.shared
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -37,38 +36,44 @@ struct SettingsView: View {
                         .padding(.horizontal, 20)
 
                         // Currency
-                        settingsCard(title: "Currency", icon: "banknote.fill") {
+                        settingsCard(title: "Base Currency", icon: "banknote.fill") {
                             VStack(alignment: .leading, spacing: 14) {
-                                Text("Display Currency")
-                                    .font(.subheadline)
-                                    .foregroundColor(AppTheme.textSecondary)
-
-                                HStack(spacing: 10) {
-                                    ForEach(currencies, id: \.self) { sym in
-                                        Button { manager.currencySymbol = sym } label: {
-                                            Text(sym)
-                                                .font(.headline)
-                                                .frame(width: 46, height: 46)
-                                                .background(manager.currencySymbol == sym
-                                                            ? AppTheme.accentPurple
-                                                            : AppTheme.surface)
-                                                .foregroundColor(manager.currencySymbol == sym
-                                                                 ? .white : AppTheme.textSecondary)
-                                                .clipShape(Circle())
-                                                .overlay(Circle().stroke(AppTheme.border, lineWidth: 1))
-                                                .scaleEffect(manager.currencySymbol == sym ? 1.08 : 1.0)
-                                                .animation(.spring(response: 0.3, dampingFraction: 0.6),
-                                                           value: manager.currencySymbol)
-                                        }
-                                        .buttonStyle(ScaleButtonStyle())
-                                    }
+                                HStack {
+                                    Text("Display Currency")
+                                        .font(.subheadline)
+                                        .foregroundColor(AppTheme.textSecondary)
                                     Spacer()
+                                    Picker("Base Currency", selection: $currencyManager.baseCurrency) {
+                                        ForEach(CurrencyManager.shared.availableCurrencies, id: \.self) { code in
+                                            Text("\(CurrencyManager.symbol(for: code)) \(code)").tag(code)
+                                        }
+                                    }
+                                    .pickerStyle(.menu)
+                                    .tint(AppTheme.accentPurple)
                                 }
 
-                                Text("The currency symbol is used throughout the app to display your subscription costs.")
+                                Text("The base currency is used to normalize your total spending analytics.")
                                     .font(.caption)
                                     .foregroundColor(AppTheme.textTertiary)
                             }
+                        }
+
+                        // Notifications
+                        settingsCard(title: "Notifications", icon: "bell.fill") {
+                            NavigationLink(destination: NotificationSettingsView()) {
+                                HStack {
+                                    Image(systemName: "clock.fill")
+                                        .foregroundColor(AppTheme.accentPurple)
+                                    Text("Reminder Settings")
+                                        .font(.subheadline)
+                                        .foregroundColor(AppTheme.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.bold())
+                                        .foregroundColor(AppTheme.textTertiary)
+                                }
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
 
                         // Personalize

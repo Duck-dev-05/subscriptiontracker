@@ -11,6 +11,7 @@ struct SubscriptionDetailView: View {
 
     @State private var showingEdit   = false
     @State private var showingDelete = false
+    @State private var showingCancellation = false
 
     private var accent: Color {
         Color(hex: subscription.colorHex) ?? AppTheme.accentPurple
@@ -60,6 +61,9 @@ struct SubscriptionDetailView: View {
         .customToolbarBackground()
         .sheet(isPresented: $showingEdit) {
             AddEditSubscriptionView(mode: .edit(subscription))
+        }
+        .sheet(isPresented: $showingCancellation) {
+            SafariView(url: CancellationGuide.url(for: subscription.name))
         }
         .alert("Delete Subscription", isPresented: $showingDelete) {
             Button("Delete", role: .destructive) {
@@ -119,7 +123,7 @@ struct SubscriptionDetailView: View {
     private var detailsCard: some View {
         VStack(spacing: 0) {
             detailRow(icon: "tag.fill",         label: "Price",
-                      value: "\(manager.currencySymbol)\(String(format: "%.2f", subscription.price)) \(subscription.billingCycle.abbreviation)")
+                      value: "\(CurrencyManager.symbol(for: subscription.currencyCode))\(String(format: "%.2f", subscription.price)) \(subscription.billingCycle.abbreviation)")
             rowDivider
             detailRow(icon: "equal.circle.fill", label: "Monthly Equivalent",
                       value: "\(manager.currencySymbol)\(String(format: "%.2f", subscription.monthlyCost))")
@@ -212,7 +216,7 @@ struct SubscriptionDetailView: View {
 
                     Spacer()
 
-                    Text("\(manager.currencySymbol)\(String(format: "%.2f", subscription.price))")
+                    Text("\(CurrencyManager.symbol(for: subscription.currencyCode))\(String(format: "%.2f", subscription.price))")
                         .font(.subheadline)
                         .fontWeight(idx == 0 ? .bold : .regular)
                         .foregroundColor(idx == 0 ? AppTheme.textPrimary : AppTheme.textSecondary)
@@ -251,7 +255,7 @@ struct SubscriptionDetailView: View {
                         .font(.subheadline)
                         .foregroundColor(AppTheme.textSecondary)
                     Spacer()
-                    Text("\(manager.currencySymbol)\(String(format: "%.2f", payment.amount))")
+                    Text("\(CurrencyManager.symbol(for: subscription.currencyCode))\(String(format: "%.2f", payment.amount))")
                         .font(.subheadline.bold())
                         .foregroundColor(AppTheme.success)
                 }
@@ -277,6 +281,23 @@ struct SubscriptionDetailView: View {
                                 colors: [AppTheme.success, Color(red: 0.15, green: 0.62, blue: 0.30)],
                                 startPoint: .leading, endPoint: .trailing
                             ))
+                    )
+            }
+
+            // How to Cancel
+            Button { showingCancellation = true } label: {
+                Label("How to Cancel", systemImage: "xmark.circle")
+                    .font(.subheadline.bold())
+                    .foregroundColor(AppTheme.textPrimary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppTheme.radiusMd)
+                            .fill(AppTheme.surface)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: AppTheme.radiusMd)
+                                    .stroke(AppTheme.border, lineWidth: 1)
+                            )
                     )
             }
 
