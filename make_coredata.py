@@ -8,7 +8,7 @@ xml = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
     <entity name="CDSubscription" representedClassName="CDSubscription" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="UUID" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="price" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="price" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES" usesScalarValueType="YES"/>
         <attribute name="billingCycle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="nextBillingDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="colorHex" optional="YES" attributeType="String" syncable="YES"/>
@@ -17,7 +17,7 @@ xml = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="accountName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="currencyCode" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="isArchived" optional="NO" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="isArchived" optional="NO" attributeType="Boolean" defaultValueString="NO" syncable="YES" usesScalarValueType="YES"/>
         <attribute name="paymentHistoryData" optional="YES" attributeType="Binary" syncable="YES"/>
     </entity>
 </model>

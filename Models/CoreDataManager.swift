@@ -40,22 +40,7 @@ class CoreDataManager {
     }
 }
 
-@objc(CDSubscription)
-public class CDSubscription: NSManagedObject {
-    @NSManaged public var id: UUID?
-    @NSManaged public var name: String?
-    @NSManaged public var price: Double
-    @NSManaged public var billingCycle: String?
-    @NSManaged public var nextBillingDate: Date?
-    @NSManaged public var colorHex: String?
-    @NSManaged public var category: String?
-    @NSManaged public var icon: String?
-    @NSManaged public var notes: String?
-    @NSManaged public var accountName: String?
-    @NSManaged public var isArchived: Bool
-    @NSManaged public var paymentHistoryData: Data?
-    @NSManaged public var currencyCode: String?
-
+extension CDSubscription {
     var toSubscription: Subscription? {
         guard let id = id,
               let name = name,
