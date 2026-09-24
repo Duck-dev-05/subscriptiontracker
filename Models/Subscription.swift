@@ -82,6 +82,44 @@ struct Subscription: Identifiable, Codable {
     var isArchived: Bool = false
     var currencyCode: String = "USD"
 
+    enum CodingKeys: String, CodingKey {
+        case id, name, price, billingCycle, nextBillingDate, colorHex, category, icon, notes, accountName, paymentHistory, isArchived, currencyCode
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        price = try container.decode(Double.self, forKey: .price)
+        billingCycle = try container.decode(BillingCycle.self, forKey: .billingCycle)
+        nextBillingDate = try container.decode(Date.self, forKey: .nextBillingDate)
+        colorHex = try container.decode(String.self, forKey: .colorHex)
+        category = try container.decode(SubscriptionCategory.self, forKey: .category)
+        icon = try container.decode(String.self, forKey: .icon)
+        notes = try container.decode(String.self, forKey: .notes)
+        accountName = try container.decodeIfPresent(String.self, forKey: .accountName)
+        paymentHistory = try container.decodeIfPresent([PaymentHistory].self, forKey: .paymentHistory) ?? []
+        isArchived = try container.decodeIfPresent(Bool.self, forKey: .isArchived) ?? false
+        currencyCode = try container.decodeIfPresent(String.self, forKey: .currencyCode) ?? "USD"
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(price, forKey: .price)
+        try container.encode(billingCycle, forKey: .billingCycle)
+        try container.encode(nextBillingDate, forKey: .nextBillingDate)
+        try container.encode(colorHex, forKey: .colorHex)
+        try container.encode(category, forKey: .category)
+        try container.encode(icon, forKey: .icon)
+        try container.encode(notes, forKey: .notes)
+        try container.encodeIfPresent(accountName, forKey: .accountName)
+        try container.encode(paymentHistory, forKey: .paymentHistory)
+        try container.encode(isArchived, forKey: .isArchived)
+        try container.encode(currencyCode, forKey: .currencyCode)
+    }
+
     var displayAccountName: String {
         if let acc = accountName?.trimmingCharacters(in: .whitespacesAndNewlines), !acc.isEmpty {
             return acc

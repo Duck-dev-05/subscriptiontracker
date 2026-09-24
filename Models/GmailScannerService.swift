@@ -60,9 +60,11 @@ class GmailScannerService {
         }
         
         let accessToken = user.accessToken.tokenString
-        // Broadened query to find any receipt or invoice
-        let query = "subject:receipt OR subject:subscription OR subject:invoice OR \"receipt\" OR \"subscription\"".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let urlString = "https://gmail.googleapis.com/gmail/v1/users/me/messages?q=\(query)&maxResults=15"
+        // Specifically target Gmail categories where receipts and subscriptions usually land 
+        // to avoid pulling in unrelated generic "All Mail" newsletters.
+        let rawQuery = "{category:purchases category:updates category:promotions} (subject:receipt OR subject:invoice OR subject:renewal OR \"subscription\")"
+        let query = rawQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let urlString = "https://gmail.googleapis.com/gmail/v1/users/me/messages?q=\(query)&maxResults=25"
         
         guard let url = URL(string: urlString) else {
             completion(.failure(ScannerError.invalidURL))
@@ -98,7 +100,7 @@ class GmailScannerService {
                 
                 let group = DispatchGroup()
                 var collectedSnippets: [String] = []
-                let maxToFetch = min(messageStubs.count, 15)
+                let maxToFetch = min(messageStubs.count, 25)
                 
                 for i in 0..<maxToFetch {
                     group.enter()
