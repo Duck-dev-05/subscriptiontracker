@@ -16,7 +16,6 @@ struct HomeView: View {
     @State private var showingAccounts = false
     @State private var sortOption: SortOption = .nextBilling
     @State private var showingLimitAlert = false
-    @State private var appeared = false
 
     var sortedSubscriptions: [Subscription] {
         manager.activeSubscriptions.sorted { lhs, rhs in
@@ -55,9 +54,6 @@ struct HomeView: View {
             .sheet(isPresented: $showingLimitAlert) { PaywallView() }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .onAppear {
-            withAnimation(.easeOut(duration: 0.55)) { appeared = true }
-        }
     }
 
     // MARK: Header
@@ -186,8 +182,6 @@ struct HomeView: View {
             .padding(20)
         }
         .shadow(color: AppTheme.accentPurple.opacity(0.30), radius: 20, x: 0, y: 10)
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 18)
     }
 
     // MARK: Due Soon Strip

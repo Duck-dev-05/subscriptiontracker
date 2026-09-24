@@ -60,11 +60,10 @@ class GmailScannerService {
         }
         
         let accessToken = user.accessToken.tokenString
-        // Specifically target Gmail categories where receipts and subscriptions usually land 
-        // to avoid pulling in unrelated generic "All Mail" newsletters.
-        let rawQuery = "{category:purchases category:updates category:promotions} (subject:receipt OR subject:invoice OR subject:renewal OR \"subscription\")"
+        // Fetch the 100 most recent emails from the Inbox or the Purchases category
+        let rawQuery = "in:inbox OR category:purchases"
         let query = rawQuery.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let urlString = "https://gmail.googleapis.com/gmail/v1/users/me/messages?q=\(query)&maxResults=25"
+        let urlString = "https://gmail.googleapis.com/gmail/v1/users/me/messages?q=\(query)&maxResults=100"
         
         guard let url = URL(string: urlString) else {
             completion(.failure(ScannerError.invalidURL))
@@ -100,7 +99,7 @@ class GmailScannerService {
                 
                 let group = DispatchGroup()
                 var collectedSnippets: [String] = []
-                let maxToFetch = min(messageStubs.count, 25)
+                let maxToFetch = min(messageStubs.count, 100)
                 
                 for i in 0..<maxToFetch {
                     group.enter()
@@ -165,6 +164,7 @@ class GmailScannerService {
         let prompt = """
         You are an expert data extractor. I have a list of email snippets representing receipts or subscriptions.
         Extract all subscription services found.
+        IMPORTANT: DO NOT invent, hallucinate, or mock any subscriptions. If you do not find any real subscriptions in the text, you MUST return an empty array [].
         Return ONLY a valid JSON array of objects, with NO markdown formatting, NO backticks.
         Each object must have:
         - "name": String (Name of the service)
