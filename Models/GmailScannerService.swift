@@ -15,7 +15,7 @@ class GmailScannerService {
     
     struct MessageDetail: Codable {
         let id: String
-        let snippet: String
+        let snippet: String?
         let payload: MessagePayload?
     }
     
@@ -116,7 +116,7 @@ class GmailScannerService {
                     self.fetchMessageDetail(id: messageStubs[i].id, accessToken: accessToken) { detail in
                         if let detail = detail {
                             let subject = detail.payload?.headers?.first(where: { $0.name.lowercased() == "subject" })?.value ?? "Unknown Subject"
-                            collectedSnippets.append("Subject: \(subject) | Snippet: \(detail.snippet)")
+                            collectedSnippets.append("Subject: \(subject) | Snippet: \(detail.snippet ?? "")")
                         }
                         group.leave()
                     }
@@ -174,13 +174,13 @@ class GmailScannerService {
         
         let prompt = """
         You are an expert data extractor. I have a list of email snippets representing receipts or subscriptions.
-        Extract all subscription services found.
-        IMPORTANT: DO NOT invent, hallucinate, or mock any subscriptions. If you do not find any real subscriptions in the text, you MUST return an empty array [].
+        Extract all subscription services and any digital purchases found.
+        IMPORTANT: DO NOT invent, hallucinate, or mock any data. If you do not find any real subscriptions or purchases in the text, you MUST return an empty array [].
         Return ONLY a valid JSON array of objects, with NO markdown formatting, NO backticks.
         Each object must have:
-        - "name": String (Name of the service)
-        - "price": Double (The monthly cost. Guess if not explicitly stated, but 0.0 if unknown)
-        - "category": String (Must be exactly one of: "streaming", "music", "gaming", "cloud", "software", "other")
+        - "name": String (Name of the service or app)
+        - "price": Double (The monthly cost or one-time purchase price. Guess if not explicitly stated, but 0.0 if unknown)
+        - "category": String (Must be exactly one of: "streaming", "music", "gaming", "cloud", "software", "productivity", "other")
         - "colorHex": String (A suitable hex color code for the brand, e.g., "E50914" for Netflix)
         - "emoji": String (A single fitting emoji, e.g. "🎬" for Netflix)
         
