@@ -55,6 +55,7 @@ struct ContentView: View {
             .preferredColorScheme(.dark)
             .onAppear {
                 NotificationManager.shared.requestPermission()
+                hasSeenOnboarding = true
             }
         }
     }
