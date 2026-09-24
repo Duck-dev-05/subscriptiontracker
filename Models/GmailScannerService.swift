@@ -16,6 +16,16 @@ class GmailScannerService {
     struct MessageDetail: Codable {
         let id: String
         let snippet: String
+        let payload: MessagePayload?
+    }
+    
+    struct MessagePayload: Codable {
+        let headers: [MessageHeader]?
+    }
+    
+    struct MessageHeader: Codable {
+        let name: String
+        let value: String
     }
     
     // MARK: - Gemini API Structures
@@ -105,7 +115,8 @@ class GmailScannerService {
                     group.enter()
                     self.fetchMessageDetail(id: messageStubs[i].id, accessToken: accessToken) { detail in
                         if let detail = detail {
-                            collectedSnippets.append(detail.snippet)
+                            let subject = detail.payload?.headers?.first(where: { $0.name.lowercased() == "subject" })?.value ?? "Unknown Subject"
+                            collectedSnippets.append("Subject: \(subject) | Snippet: \(detail.snippet)")
                         }
                         group.leave()
                     }
