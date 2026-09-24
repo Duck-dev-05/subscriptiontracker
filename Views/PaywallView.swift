@@ -123,7 +123,8 @@ struct FeatureRow: View {
         HStack(spacing: 16) {
             ZStack {
                 Circle()
-                    .fill(AppTheme.surface)
+                    .fill(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                     .frame(width: 44, height: 44)
                 
                 Image(systemName: icon)

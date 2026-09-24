@@ -76,12 +76,13 @@ struct FloatingTabBar: View {
         .padding(.vertical, 10)
         .background(
             RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .fill(Color(red: 0.09, green: 0.09, blue: 0.14).opacity(0.97))
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
                 .overlay(
                     RoundedRectangle(cornerRadius: 30, style: .continuous)
-                        .stroke(AppTheme.border, lineWidth: 1)
+                        .stroke(AppTheme.borderStrong, lineWidth: 1)
                 )
-                .shadow(color: Color.black.opacity(0.55), radius: 24, x: 0, y: 10)
+                .shadow(color: Color.black.opacity(0.6), radius: 30, x: 0, y: 15)
         )
         .padding(.horizontal, 18)
         .padding(.bottom, 22)

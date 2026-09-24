@@ -70,12 +70,14 @@ struct SubscriptionRowView: View {
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                .fill(AppTheme.surface)
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
                 .overlay(
                     RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                        .stroke(AppTheme.border, lineWidth: 1)
+                        .stroke(AppTheme.borderStrong, lineWidth: 1)
                 )
         )
+        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
     }
 
     private var dateLabel: String {

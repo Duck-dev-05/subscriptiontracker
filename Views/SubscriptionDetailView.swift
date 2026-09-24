@@ -293,7 +293,8 @@ struct SubscriptionDetailView: View {
                     .padding(.vertical, 15)
                     .background(
                         RoundedRectangle(cornerRadius: AppTheme.radiusMd)
-                            .fill(AppTheme.surface)
+                            .fill(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                             .overlay(
                                 RoundedRectangle(cornerRadius: AppTheme.radiusMd)
                                     .stroke(AppTheme.border, lineWidth: 1)

@@ -177,7 +177,8 @@ struct StatisticsView: View {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Capsule()
-                                .fill(AppTheme.surface)
+                                .fill(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                                 .frame(height: 8)
                             Capsule()
                                 .fill(
@@ -307,10 +308,7 @@ struct DonutChart: View {
                 }
             }
 
-            // Hole
-            Circle()
-                .fill(AppTheme.background)
-                .frame(width: 72, height: 72)
+            // Removed solid center hole to allow frosted glass to show through
         }
     }
 }

@@ -139,8 +139,10 @@ struct ProfileView: View {
                                 .foregroundColor(AppTheme.textSecondary)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 4)
-                                .background(AppTheme.surface)
+                                .background(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                                 .clipShape(Capsule())
+                                .overlay(Capsule().stroke(AppTheme.borderStrong, lineWidth: 1))
                         }
                     }
                 }
@@ -182,7 +184,8 @@ struct ProfileView: View {
                         .padding(16)
                         .background(
                             RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                                .fill(AppTheme.surface)
+                                .fill(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                                 .overlay(RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous).stroke(Color(hex: "FFD700")!.opacity(0.3), lineWidth: 1))
                         )
                     }
@@ -215,10 +218,11 @@ struct ProfileView: View {
                 .padding(16)
                 .background(
                     RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                        .fill(AppTheme.surface)
+                        .fill(.ultraThinMaterial)
+                        .environment(\.colorScheme, .dark)
                         .overlay(
                             RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                                .stroke(AppTheme.border, lineWidth: 1)
+                                .stroke(AppTheme.borderStrong, lineWidth: 1)
                         )
                 )
                 .padding(.horizontal, 20)
@@ -276,8 +280,9 @@ struct ProfileView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                .fill(AppTheme.surface)
-                .overlay(RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous).stroke(AppTheme.border, lineWidth: 1))
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
+                .overlay(RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous).stroke(AppTheme.borderStrong, lineWidth: 1))
         )
     }
     
@@ -293,10 +298,11 @@ struct ProfileView: View {
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                    .fill(AppTheme.surface)
+                    .fill(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark)
                     .overlay(
                         RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                            .stroke(AppTheme.border, lineWidth: 1)
+                            .stroke(AppTheme.borderStrong, lineWidth: 1)
                     )
             )
         }
@@ -372,10 +378,11 @@ struct LoginView: View {
                     }
                     .background(
                         RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                            .fill(AppTheme.surface)
+                            .fill(.ultraThinMaterial)
+                            .environment(\.colorScheme, .dark)
                             .overlay(
                                 RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                                    .stroke(AppTheme.border, lineWidth: 1)
+                                    .stroke(AppTheme.borderStrong, lineWidth: 1)
                             )
                     )
                     
@@ -421,10 +428,11 @@ struct LoginView: View {
                         .padding(.vertical, 16)
                         .background(
                             RoundedRectangle(cornerRadius: AppTheme.radiusMd)
-                                .fill(AppTheme.surface)
+                                .fill(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: AppTheme.radiusMd)
-                                        .stroke(AppTheme.border, lineWidth: 1)
+                                        .stroke(AppTheme.borderStrong, lineWidth: 1)
                                 )
                         )
                     }

@@ -112,12 +112,14 @@ struct GlassCardModifier: ViewModifier {
             .padding(padding)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(AppTheme.surface)
+                    .fill(.ultraThinMaterial)
+                    .environment(\.colorScheme, .dark) // Force dark blur
                     .overlay(
                         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                             .stroke(AppTheme.border, lineWidth: 1)
                     )
             )
+            .shadow(color: Color.black.opacity(0.2), radius: 15, x: 0, y: 8)
     }
 }
 

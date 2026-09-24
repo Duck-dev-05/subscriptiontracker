@@ -89,9 +89,10 @@ struct HomeView: View {
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(AppTheme.textSecondary)
                         .frame(width: 38, height: 38)
-                        .background(AppTheme.surface)
+                        .background(.ultraThinMaterial)
+                        .environment(\.colorScheme, .dark)
                         .clipShape(Circle())
-                        .overlay(Circle().stroke(AppTheme.border, lineWidth: 1))
+                        .overlay(Circle().stroke(AppTheme.borderStrong, lineWidth: 1))
                 }
 
                 Button { 
@@ -120,9 +121,10 @@ struct HomeView: View {
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(AppTheme.textSecondary)
                 .frame(width: 38, height: 38)
-                .background(AppTheme.surface)
+                .background(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
                 .clipShape(Circle())
-                .overlay(Circle().stroke(AppTheme.border, lineWidth: 1))
+                .overlay(Circle().stroke(AppTheme.borderStrong, lineWidth: 1))
         }
     }
 
@@ -305,13 +307,14 @@ struct DueSoonCard: View {
         .frame(width: 128, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                .fill(AppTheme.surface)
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
                 .overlay(
                     RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                        .stroke(accentColor.opacity(0.22), lineWidth: 1)
+                        .stroke(accentColor.opacity(0.35), lineWidth: 1)
                 )
         )
-        .shadow(color: accentColor.opacity(0.10), radius: 8, x: 0, y: 4)
+        .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
     }
 
     private var daysLabel: String {

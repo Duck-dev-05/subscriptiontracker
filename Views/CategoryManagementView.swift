@@ -126,13 +126,15 @@ struct AddCategorySheet: View {
                             .font(.system(size: 30))
                             .frame(width: 60, height: 60)
                             .multilineTextAlignment(.center)
-                            .background(AppTheme.surface)
+                            .background(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                             .cornerRadius(12)
                         
                         TextField("Category Name", text: $name)
                             .font(.headline)
                             .padding()
-                            .background(AppTheme.surface)
+                            .background(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                             .cornerRadius(12)
                     }
                     .padding(.horizontal, 20)
@@ -165,7 +167,8 @@ struct CategoryRow: View {
         HStack(spacing: 16) {
             ZStack {
                 Circle()
-                    .fill(AppTheme.surface)
+                    .fill(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                     .frame(width: 44, height: 44)
                 
                 Text(category.emoji)
@@ -190,7 +193,8 @@ struct CategoryRow: View {
         .padding(12)
         .background(
             RoundedRectangle(cornerRadius: AppTheme.radiusMd)
-                .fill(AppTheme.surface)
+                .fill(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                 .overlay(
                     RoundedRectangle(cornerRadius: AppTheme.radiusMd)
                         .stroke(AppTheme.border, lineWidth: 1)

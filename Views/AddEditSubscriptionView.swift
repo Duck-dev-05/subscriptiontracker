@@ -384,7 +384,8 @@ struct AddEditSubscriptionView: View {
             content()
                 .background(
                     RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
-                        .fill(AppTheme.surface)
+                        .fill(.ultraThinMaterial)
+                                .environment(\.colorScheme, .dark)
                         .overlay(
                             RoundedRectangle(cornerRadius: AppTheme.radiusMd, style: .continuous)
                                 .stroke(AppTheme.border, lineWidth: 1)
